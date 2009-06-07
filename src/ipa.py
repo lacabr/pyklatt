@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Klatt CPSC 599 module: src.ipa
 

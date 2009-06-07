@@ -96,7 +96,7 @@ def _phonemeToSound(phoneme, preceding_sounds, following_sounds, word_position, 
 	(ipa_character, duration_multiplier) = phoneme
 	
 	#Retrieve synthesis parameters.
-	position = None
+	regions = None
 	(handled, parameters) = ipa.screenIPAClusters(ipa_character, preceding_sounds, following_sounds)
 	if handled:
 		if parameters is None: #Second half of a cluster.
@@ -105,7 +105,11 @@ def _phonemeToSound(phoneme, preceding_sounds, following_sounds, word_position, 
 	elif not handled: #Look up the synthesis parameters.
 		(parameters, regions) = ipa.IPA_DATA[ipa_character]
 		
+	#Universal rules may append additional steps, so parameters needs to be a list.
+	parameters = [list(parameters)]
+	
 	#Apply universal rules to the parameters.
+	parameters = universal_rules.nasalizeVowel(ipa_character, following_sounds, parameters)
 	
 	#Apply language-specific rules to the parameters.
 	
