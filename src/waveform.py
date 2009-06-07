@@ -13,7 +13,6 @@ Legal
  
  (C) Neil Tallim, 2009
 """
-
 import struct
 import wave
 

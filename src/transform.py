@@ -95,8 +95,16 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 def _phonemeToSound(phoneme, preceding_sounds, following_sounds, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, options):
 	(ipa_character, duration_multiplier) = phoneme
 	
-	#Retrieve formant parameters for the IPA character.
-	
+	#Retrieve synthesis parameters.
+	position = None
+	(handled, parameters) = ipa.screenIPAClusters(ipa_character, preceding_sounds, following_sounds)
+	if handled:
+		if parameters is None: #Second half of a cluster.
+			return ()
+		regions = ipa.IPA_REGIONS[ipa_character]
+	elif not handled: #Look up the synthesis parameters.
+		(parameters, regions) = ipa.IPA_DATA[ipa_character]
+		
 	#Apply universal rules to the parameters.
 	
 	#Apply language-specific rules to the parameters.
