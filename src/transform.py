@@ -28,7 +28,7 @@ _SENTENCE_EXCLAMATION = 2
 _WORD_QUOTED = 1
 _WORD_EMPHASIZED = 2
 
-def paragraphToSound(paragraph, options):
+def paragraphToSound(paragraph, options, synthesizer):
 	tokens = paragraph.split()
 	
 	sentences = []
@@ -40,26 +40,26 @@ def paragraphToSound(paragraph, options):
 	if options.debug:
 		print sentences
 		
-	silent_half_second = ((0,) * (options.samples_per_second / 2))
+	silent_half_second = ((0,) * (options.samples_per_frame / 2))
 	sounds = []
 	for (i, sentence) in enumerate(sentences): #Add the sentence, plus a half-second of silence.
-		sounds.append(_sentenceToSound(sentence, i + 1, len(sentences) - i - 1, options))
+		sounds.append(_sentenceToSound(sentence, i + 1, len(sentences) - i - 1, options, synthesizer))
 		sounds.append(silent_half_second)
 	return sounds
 	
-def _sentenceToSound(sentence, position, remaining_sentences, options):
+def _sentenceToSound(sentence, position, remaining_sentences, options, synthesizer):
 	(words, markup) = sentence
 	
 	is_question = _SENTENCE_QUESTION in markup
 	is_exclamation = _SENTENCE_EXCLAMATION in markup
 	
-	silent_sixth_second = ((0,) * (options.samples_per_second / 6))
+	silent_sixth_second = ((0,) * (options.samples_per_frame / 6))
 	sounds = ()
 	for (i, word) in enumerate(words): #Add the word, plus a sixth of a second of silence.
-		sounds += _wordToSound(word, i + 1, len(words) - i - 1, sentence_position, remaining_sentences, is_question, is_exclamation, options)) + silent_sixth_second
+		sounds += _wordToSound(word, i + 1, len(words) - i - 1, sentence_position, remaining_sentences, is_question, is_exclamation, options, synthesizer)) + silent_sixth_second
 	return sounds
 	
-def _wordToSound(word, position, remaining_words, sentence_position, remaining_sentences, is_question, is_exclamation, options):
+def _wordToSound(word, position, remaining_words, sentence_position, remaining_sentences, is_question, is_exclamation, options, synthesizer):
 	(token, markup) = word
 	
 	is_quoted = _WORD_QUOTED in markup
@@ -67,7 +67,7 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 	
 	terminal_pause = ()
 	if token.endswidth((',', ':')):
-		terminal_pause = ((0,) * (options.samples_per_second / 6)) #A sixth of a second of silence.
+		terminal_pause = ((0,) * (options.samples_per_frame / 6)) #A sixth of a second of silence.
 		token = token[:-1]
 		
 	phonemes = []
@@ -87,12 +87,13 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 	if options.verbose:
 		print "\tSynthesizing '%s'..." % (''.join([phoneme for (phoneme, multiplier) in phonemes]))
 		
+	synthesizer.reset()
 	sounds = ()
 	for (i, phoneme) in enumerate(phonemes):
-		sounds += _phonemeToSound(phoneme, [p for (p, d) in phonemes[:i]], [p for (p, d) in phonemes[i + 1:]], position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, options)
+		sounds += _phonemeToSound(phoneme, [p for (p, d) in phonemes[:i]], [p for (p, d) in phonemes[i + 1:]], position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, options, synthesizer)
 	return sounds
 	
-def _phonemeToSound(phoneme, preceding_sounds, following_sounds, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, options):
+def _phonemeToSound(phoneme, preceding_sounds, following_sounds, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, options, synthesizer):
 	(ipa_character, duration_multiplier) = phoneme
 	
 	#Retrieve synthesis parameters.
@@ -105,80 +106,26 @@ def _phonemeToSound(phoneme, preceding_sounds, following_sounds, word_position, 
 	elif not handled: #Look up the synthesis parameters.
 		(parameters, regions) = ipa.IPA_DATA[ipa_character]
 		
-	#Universal rules may append additional steps, so parameters needs to be a list.
-	parameters = [list(parameters)]
+	#Parameters need to be mutable.
+	parameters = list(parameters)
+	parameters[-1] = int(parameters[-1] * duration_multiplier) #Adjust the duration based on markup.
+	#Universal rules may append additional steps, so there needs to be a list of parameters.
+	parameters_list = [parameters]
 	
 	#Apply universal rules to the parameters.
-	parameters = universal_rules.nasalizeVowel(ipa_character, following_sounds, parameters)
+	parameters_list = universal_rules.nasalizeVowel(ipa_character, following_sounds, parameters_list)
 	
 	#Apply language-specific rules to the parameters.
+	parameters_list = language_rules.applyRules(parameters_list, ipa_character, preceding_sounds, following_sounds, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation)
 	
 	#Synthesize sound.
+	sounds = ()
+	for parameters in parameters_list:
+		if options.debug:
+			print parameters
+		sounds += synthesizer.synthesize(parameters)
+	return sounds
 	
-	#Return sound.
-	
-	"""
-  icount=0;
-  done_flag = FALSE;
-  parwave_init(globals);
-  frame_ptr = (long*) frame;
-
-  while(done_flag == FALSE)
-  {
-    for (par_count = 0; par_count < NPAR; ++par_count)
-    {
-      value = 0;
-
-#ifdef __BORLANDC__
-      result = fscanf(infp,"%ld",&value);
-#else
-      result = fscanf(infp,"%i",(int*)&value);
-#endif
-
-      frame_ptr[par_count] = value;
-    }
-    
-    if(result == EOF)
-    {
-      done_flag = TRUE;
-    }
-    else
-    {
-      parwave(globals,frame,iwave);
-
-      if(globals->quiet_flag == FALSE)
-      {
-	printf("\rFrame %i",icount);
-	fflush(stdout);
-      }
-
-      for (isam = 0; isam < globals->nspfr; ++ isam)
-      { 
-	if(raw_flag == TRUE)
-	{
-	  low_byte = iwave[isam] & 0xff;
-	  high_byte = iwave[isam] >> 8;
-
-	  if(raw_type==1)
-	  {
-	    fprintf(outfp,"%c%c",high_byte,low_byte);
-	  }
-	  else
-	  {
-	    fprintf(outfp,"%c%c",low_byte,high_byte);
-	  }
-	}
-	else
-	{
-	  fprintf(outfp,"%i\n",iwave[isam]);
-	}
-      }
-      icount++;
-    }
-  }
-}
-	"""
-
 def _extractSentence(tokens):
 	word_regexp = _WORD_REGEXP
 	word_quoted = _WORD_QUOTED

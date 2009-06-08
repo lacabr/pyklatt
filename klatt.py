@@ -21,6 +21,7 @@ import optparse
 import re
 import sys
 
+import src.parwave as parwave
 import src.transform as transform
 import src.waveform as waveform
 
@@ -66,6 +67,7 @@ def _main(input_file, options):
 	else:
 		options.natural_samples = options.sample_factor = None
 		
+	synthesizer = parwave.KlattSynthesizer(options)
   	wave_form = waveform.WaveForm("output.wav", options.samplerate)
   	chomp_regexp = re.compile("\r?\n$")
 	for paragraph in open(input_file):
@@ -75,25 +77,22 @@ def _main(input_file, options):
 			
 		if options.verbose:
 			print "Processing '%s'..." % (paragraph)
-		for segment in transform.paragraphToSound(paragraph, options): #Convert and add the paragraph.
+		for segment in transform.paragraphToSound(paragraph, options, synthesizer): #Convert and add the paragraph.
 			wave_form.addSamples(segment)
-		wave_form.addSamples((0,) * (options.samples_per_second / 2)) #Add a half-second of silence.
+		wave_form.addSamples((0,) * (options.samples_per_frame / 2)) #Add a half-second of silence.
 	wave_form.close()
-	if options.verbose:
-		print "Done."
-		
-		
+	
+	
 if __name__ == '__main__':
 	parser = optparse.OptionParser(usage="%prog [options] <IPA script>", version="%s v%s" % ("Klatt CPSC 599", "pre-alpha"),
 	 description="Renders IPA transcriptions as synthesized speech.")
 	parser.add_option("-d", "--debug", dest="debug", help="Output statistical information", action="store_true", default=False)
 	parser.add_option("-f", "--frame_rate", dest="framerate", help="Set the number of milliseconds per frame", type="int", default=5)
-	parser.add_option("-l", "--flutter", dest="flutter", help="Sets the percentage of f0 flutter", type="float", default=0.0)
 	parser.add_option("-n", "--formant_count", dest="num_formants", help="Set the number of formants in the cascade branch", type="int", default=5)
 	parser.add_option("-o", "--simulate_voice", dest="natural_voice", help="Disables natural voicing samples", action="store_false", default=True)
 	parser.add_option("-O", "--voice_samples", dest="voice_samples", help="Override default natural voicing samples", type="string", default=None)
 	parser.add_option("-p", "--parallel", dest="cascade", help="Disable cascade-parallel behaviour", action="store_false", default=True)
-	parser.add_option("-s", "--sample_rate", dest="samplerate", help="Set the sample rate", type="int", default=22050)
+	parser.add_option("-s", "--sample_rate", dest="samplerate", help="Set the sample rate", type="int", default=16000)
 	parser.add_option("-v", "--verbose", dest="verbose", help="Output intermediate state information", action="store_true", default=False)
 	(options, arguments) = parser.parse_args()
 	
@@ -102,6 +101,6 @@ if __name__ == '__main__':
 		sys.exit(1)
 	del parser
 	
-	options.samples_per_second = (options.samplerate * options.framerate) / 1000
+	options.samples_per_frame = (options.samplerate * options.framerate) / 1000
 	_main(arguments[0], options)
 	
