@@ -97,7 +97,7 @@ class KlattSynthesizer(object):
 					cascade_resonators.append(_Resonator(7500, 600, self._minus_pi_t, self._two_pi_t))
 		cascade_resonators = tuple(cascade_resonators)
 		
-		zero_resonator = _Resonator(fnz, bnz, self._minus_pi_t, self._two_pi_t)
+		zero_resonator = _AntiResonator(fnz, bnz, self._minus_pi_t, self._two_pi_t)
 		nasal_resonator = _Resonator(fnp, bnp, self._minus_pi_t, self._two_pi_t)
 		
 		parallel_nasal_resonator = _Resonator(fnp, bnp, self._minus_pi_t, self._two_pi_t)
