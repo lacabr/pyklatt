@@ -20,7 +20,9 @@ import language_rules
 import parwave
 import universal_rules
 
-_WORD_REGEXP = re.compile('([*"]*)(\w[\w<>]+[:,]?)([*".!?]*)')
+#'mnŋpbtdkgfvθðszʃʒhɹjwlieɛæaIəʊuoʌɔ'
+_IPA_CHARACTERS = u'mn\u014bpbtdkgfv\u03b8\xf0sz\u0283\u0292h\u0279jwlie\u025b\xe6aI\u0259\u028auo\u028c\u0254'
+_WORD_REGEXP = re.compile('([*"]*)([%s][%s<>]*[:,]?)([*".!?]*)' % (_IPA_CHARACTERS, _IPA_CHARACTERS))
 
 _SENTENCE_QUESTION = 1
 _SENTENCE_EXCLAMATION = 2
@@ -56,7 +58,7 @@ def _sentenceToSound(sentence, position, remaining_sentences, options, synthesiz
 	silent_sixth_second = ((0,) * (options.samples_per_frame / 6))
 	sounds = ()
 	for (i, word) in enumerate(words): #Add the word, plus a sixth of a second of silence.
-		sounds += _wordToSound(word, i + 1, len(words) - i - 1, sentence_position, remaining_sentences, is_question, is_exclamation, options, synthesizer)) + silent_sixth_second
+		sounds += _wordToSound(word, i + 1, len(words) - i - 1, position, remaining_sentences, is_question, is_exclamation, options, synthesizer) + silent_sixth_second
 	return sounds
 	
 def _wordToSound(word, position, remaining_words, sentence_position, remaining_sentences, is_question, is_exclamation, options, synthesizer):
@@ -66,7 +68,7 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 	is_emphasized = _WORD_EMPHASIZED in markup
 	
 	terminal_pause = ()
-	if token.endswidth((',', ':')):
+	if token.endswith((',', ':')):
 		terminal_pause = ((0,) * (options.samples_per_frame / 6)) #A sixth of a second of silence.
 		token = token[:-1]
 		
@@ -123,7 +125,7 @@ def _phonemeToSound(phoneme, preceding_sounds, following_sounds, word_position, 
 	for parameters in parameters_list:
 		if options.debug:
 			print parameters
-		sounds += synthesizer.synthesize(parameters)
+		sounds += synthesizer.synthesize(parameters, options)
 	return sounds
 	
 def _extractSentence(tokens):
@@ -142,9 +144,9 @@ def _extractSentence(tokens):
 		if not match:
 			raise ValueError("Invalid token in IPA input: %s" % (token))
 			
-		if '"' in match.group(0):
+		if '"' in match.group(1):
 			quotation = True
-		if '*' in match.group(0):
+		if '*' in match.group(1):
 			emphasis = True
 			
 		word_markup = []
@@ -152,33 +154,25 @@ def _extractSentence(tokens):
 			word_markup.append(word_quoted)
 		if emphasis:
 			word_markup.append(word_emphasized)
-		if word_markup:
-			word_markup = tuple(word_markup)
-		else:
-			word_markup = None
-		words.append((match.group(1), word_markup))
+		words.append((match.group(2), tuple(word_markup)))
 		
-		if '"' in match.group(2):
+		if '"' in match.group(3):
 			quotation = False
-		if '*' in match.group(2):
+		if '*' in match.group(3):
 			emphasis = False
 			
-		if '.' in match.group(2):
+		if '.' in match.group(3):
 			break
-		elif '?' in match.group(2):
+		elif '?' in match.group(3):
 			markup.append(_SENTENCE_QUESTION)
-			if '!' in match.group(2):
+			if '!' in match.group(3):
 				markup.append(_SENTENCE_EXCLAMATION)
 			break
-		elif '!' in match.group(2):
-			if '?' in match.group(2):
+		elif '!' in match.group(3):
+			if '?' in match.group(3):
 				markup.append(_SENTENCE_QUESTION)
 			markup.append(_SENTENCE_EXCLAMATION)
 			break
 			
-	if markup:
-		markup = tuple(markup)
-	else:
-		markup = None
-	return ((words, markup), tokens)
+	return ((words, tuple(markup)), tokens)
 	

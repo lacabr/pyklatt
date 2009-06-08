@@ -59,7 +59,7 @@ class KlattSynthesizer(object):
 		self._n_mod = self._n_open = self._n_per = self._t0 = 0
 		self._pulse_shape_a = self._pulse_shape_b = self._v_wave = 0.0
 		
-	def _frame_init(self, parameters):
+	def _frame_init(self, parameters, options):
 		(fgp, fgz, fgs, fnp, fnz,
 		 f1, f2, f3, f4, f5, f6,
 		 bgp, bgz, bgs, bnp, bnz,
@@ -69,12 +69,12 @@ class KlattSynthesizer(object):
 		 duration) = parameters
 		
 		av_db = max(av - 7, 0) 
-		amp_aspiration = dbToLin(ah) * 0.05
-		amp_frication = dbToLin(af) * 0.25
-		par_amp_voice = dbToLin(av)
+		amp_aspiration = self._dbToLin(ah) * 0.05
+		amp_frication = self._dbToLin(af) * 0.25
+		par_amp_voice = self._dbToLin(av)
 		
-		amp_par_fnp = dbToLin(avs) * 0.6
-		amp_bypass = dbToLin(ab) * 0.05
+		amp_par_fnp = self._dbToLin(avs) * 0.6
+		amp_bypass = self._dbToLin(ab) * 0.05
 		
 		amp_gain_0 = 0.318 #dbToLin(47)
 		
@@ -86,14 +86,14 @@ class KlattSynthesizer(object):
 			 _Resonator(f3, bw3, self._minus_pi_t, self._two_pi_t),
 			 _Resonator(f4, bw4, self._minus_pi_t, self._two_pi_t)
 			]
-			if num_formants > 4:
+			if options.num_formants > 4:
 				cascade_resonators.append(_Resonator(f5, bw5, self._minus_pi_t, self._two_pi_t))
-			if num_formants > 5:
+			if options.num_formants > 5:
 				cascade_resonators.append(_Resonator(f6, bw6, self._minus_pi_t, self._two_pi_t))
 			if options.samplerate >= 16000:
-				if num_formants > 6:
+				if options.num_formants > 6:
 					cascade_resonators.append(_Resonator(6500, 500, self._minus_pi_t, self._two_pi_t))
-				if num_formants > 7:
+				if options.num_formants > 7:
 					cascade_resonators.append(_Resonator(7500, 600, self._minus_pi_t, self._two_pi_t))
 		cascade_resonators = tuple(cascade_resonators)
 		
@@ -111,23 +111,24 @@ class KlattSynthesizer(object):
 			_Resonator(f5, bw5, self._minus_pi_t, self._two_pi_t),
 			_Resonator(f6, bw6, self._minus_pi_t, self._two_pi_t)
 		)
-		parallel_resonators[0].multiplyAmplitude(dbToLin(av) * 0.4)
-		parallel_resonators[1].multiplyAmplitude(dbToLin(a2) * 0.15)
-		parallel_resonators[1].multiplyAmplitude(dbToLin(a3) * 0.06)
-		parallel_resonators[1].multiplyAmplitude(dbToLin(a4) * 0.04)
-		parallel_resonators[1].multiplyAmplitude(dbToLin(a5) * 0.022)
-		parallel_resonators[1].multiplyAmplitude(dbToLin(a6) * 0.03)
+		parallel_resonators[0].multiplyAmplitude(self._dbToLin(av) * 0.4)
+		parallel_resonators[1].multiplyAmplitude(self._dbToLin(a2) * 0.15)
+		parallel_resonators[1].multiplyAmplitude(self._dbToLin(a3) * 0.06)
+		parallel_resonators[1].multiplyAmplitude(self._dbToLin(a4) * 0.04)
+		parallel_resonators[1].multiplyAmplitude(self._dbToLin(a5) * 0.022)
+		parallel_resonators[1].multiplyAmplitude(self._dbToLin(a6) * 0.03)
 		
 		self._rout.reset()
 		
 		return (parallel_resonators, parallel_nasal_resonator, nasal_resonator, zero_resonator, cascade_resonators,
-		 av_db, amp_aspiration, amp_frication, par_amp_voice, amp_bypass, amp_gain_0)
+		 av_db, amp_aspiration, amp_frication, par_amp_voice, amp_bypass, amp_gain_0, duration)
 		
 	def _voiceNatural(self, options):
 		if not self._t0 == 0:
 			f_val = (float(self._n_per) / self._t0) * len(options.natural_samples)
 			i_val = int(f_val)
 			diff_val = f_val - i_val
+			i_val %= 100
 			
 			current_value = options.natural_samples[i_val]
 			next_value = options.natural_samples[i_val + 1]
@@ -153,17 +154,17 @@ class KlattSynthesizer(object):
 		
 		return (0.0, 0.0)
 		
-	def synthesize(self, parameters):
+	def synthesize(self, parameters, options):
 		(parallel_resonators, parallel_nasal_resonator, nasal_resonator, zero_resonator, cascade_resonators,
-		 av_db, amp_aspiration, amp_frication, par_amp_voice, amp_bypass, amp_gain_0) = self._frame_init(parameters)
-		noise = voice = glottal_last 0
+		 av_db, amp_aspiration, amp_frication, par_amp_voice, amp_bypass, amp_gain_0, duration) = self._frame_init(parameters, options)
+		noise = voice = vlast = glottal_last = 0
 		amp_voice = amp_breath = 0.0
 		decay = 0.33
 		onemd = 0.67
 		voice = None
 		
 		sound = []
-		for i in xrange(options.samples_per_frame):
+		for i in xrange(options.samples_per_frame * duration):
 			applied_noise = noise = (noise / 2) + random.randint(-8191, 8191) #Add some noise to the signal.
 			
 			if self._n_per > self._n_mod: #Reduce noise if voicing present during second half of glottal period.
@@ -198,7 +199,7 @@ class KlattSynthesizer(object):
 			par_glottal_output = par_amp_voice * voice
 			
 			#Add aspiration amplitude.
-			aspiration = amp_aspir * applied_noise
+			aspiration = amp_aspiration * applied_noise
 			glottal_output += aspiration
 			par_glottal_output += aspiration
 			
@@ -231,6 +232,7 @@ class KlattSynthesizer(object):
 				value = 32767
 				
 			sound.append(value)
+			print value
 		return tuple(sound)
 		
 	def _dbToLin(self, db):
@@ -246,7 +248,7 @@ class KlattSynthesizer(object):
 		if db < 0 or db > 87:
 			return 0.0
 		else:
-			return _DB_TO_AMP_TABLE[db] * 0.001
+			return _DB_TO_AMP_MAP[db] * 0.001
 			
 			
 class _Resonator(object):

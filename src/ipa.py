@@ -42,7 +42,7 @@ NEAR_BACK = 4
 BACK = 5
 
 _IPA_MAPPING = {
- 'm': {
+ u'm': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -66,7 +66,7 @@ _IPA_MAPPING = {
   'nasal': True,
   'regions': [LABIAL]
  },
- 'n': {
+ u'n': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -90,7 +90,7 @@ _IPA_MAPPING = {
   'nasal': True,
   'regions': [CORONAL]
  },
- 'ŋ': {
+ u'\u014b': { #ŋ
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -114,7 +114,7 @@ _IPA_MAPPING = {
   'nasal': True,
   'regions': [DORSAL]
  },
- 'p': {
+ u'p': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -138,7 +138,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [LABIAL]
  },
- 'b': {
+ u'b': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -162,7 +162,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [LABIAL]
  },
- 't': {
+ u't': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -186,7 +186,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [CORONAL]
  },
- 'd': {
+ u'd': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -210,7 +210,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [CORONAL]
  },
- 'k': {
+ u'k': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -234,7 +234,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [DORSAL]
  },
- 'g': {
+ u'g': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -258,7 +258,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [DORSAL]
  },
- 'f': {
+ u'f': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -282,7 +282,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [LABIAL]
  },
- 'v': {
+ u'v': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -306,7 +306,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [LABIAL]
  },
- 'θ': {
+ u'\u03b8': { #θ
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -330,7 +330,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [CORONAL]
  },
- 'ð': {
+ u'\xf0': { #ð
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -354,7 +354,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [CORONAL]
  },
- 's': {
+ u's': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -378,7 +378,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [CORONAL]
  },
- 'z': {
+ u'z': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -402,7 +402,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [CORONAL]
  },
- 'ʃ': {
+ u'\u0283': { #ʃ
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -426,7 +426,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [CORONAL]
  },
- 'ʒ': {
+ u'\u0292': { #ʒ
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -450,7 +450,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [CORONAL]
  },
- 'h': {
+ u'h': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -474,7 +474,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [GLOTTAL]
  },
- 'ɹ': {
+ u'\u0279': { #ɹ
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -498,7 +498,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [CORONAL]
  },
- 'j': {
+ u'j': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -522,7 +522,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [DORSAL]
  },
- 'l': {
+ u'l': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -546,7 +546,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [CORONAL]
  },
- 'w': {
+ u'w': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -571,7 +571,7 @@ _IPA_MAPPING = {
   'regions': [LABIAL, DORSAL]
  },
 ###############################################################################
- 'i': {
+ u'i': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -595,7 +595,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [FRONT]
  },
- 'e': {
+ u'e': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -619,7 +619,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [FRONT]
  },
- 'ɛ': {
+ u'\u025b': { #ɛ
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -643,7 +643,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [NEAR_FRONT]
  },
- 'æ': {
+ u'\xe6': { #æ
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -667,7 +667,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [NEAR_FRONT]
  },
- 'a': {
+ u'a': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -691,7 +691,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [CENTRAL]
  },
- 'I': {
+ u'I': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -715,7 +715,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [NEAR_FRONT]
  },
- 'ə': {
+ u'\u0259': { #ə
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -739,7 +739,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [CENTRAL]
  },
- 'ʊ': {
+ u'\u028a': { #ʊ
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -763,7 +763,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [NEAR_BACK]
  },
- 'u': {
+ u'u': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -787,7 +787,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [BACK]
  },
- 'o': {
+ u'o': {
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -811,7 +811,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [BACK]
  },
- 'ʌ': {
+ u'\u028c': { #ʌ
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -835,7 +835,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'regions': [BACK]
  },
- 'ɔ': {
+ u'\u0254': { #ɔ
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -862,7 +862,7 @@ _IPA_MAPPING = {
 } #: A neatly organized dictionary to make it easier for linguists to alter settings.
 
 _IPA_CLUSTERS = (
- (('d', 'ʒ'), (
+ (('d', '\u0292'), (
   0, 1500, 0, #Glottal frequencies.
   250, 250, #Nasal frequencies.
   260, 1800, 2820, 3300, 3750, 4900, #Formant frequencies.
@@ -877,7 +877,7 @@ _IPA_CLUSTERS = (
   37, #Voicing sinusoidal gain.
   150 #Nominal duration.
  )),
- (('t', 'ʃ'), (
+ (('t', '\u0283'), (
   0, 1500, 0, #Glottal frequencies.
   250, 250, #Nasal frequencies.
   350, 1800, 2820, 3300, 3750, 4900, #Formant frequencies.
@@ -906,7 +906,7 @@ _IPA_CLUSTERS = (
   60, #Voicing linear gain.
   0, #Voicing sinusoidal gain.
   325 #Nominal duration.
- ),
+ )),
  (('a', 'w'), (
   0, 1500, 0, #Glottal frequencies.
   250, 250, #Nasal frequencies.
@@ -921,8 +921,8 @@ _IPA_CLUSTERS = (
   60, #Voicing linear gain.
   0, #Voicing sinusoidal gain.
   325 #Nominal duration.
- ),
- (('ɔ', 'j'), (
+ )),
+ (('\u0254', 'j'), (
   0, 1500, 0, #Glottal frequencies.
   250, 250, #Nasal frequencies.
   550, 960, 2400, 3300, 3750, 4900, #Formant frequencies.
@@ -936,7 +936,7 @@ _IPA_CLUSTERS = (
   60, #Voicing linear gain.
   0, #Voicing sinusoidal gain.
   325 #Nominal duration.
- )
+ ))
 ) #: An arbitrary mapping of complex IPA symbols that need to be specially handled.
 
 #Reduce IPA data to efficient structures.
@@ -958,8 +958,7 @@ for (ipa_character, details) in _IPA_MAPPING.iteritems():
 	 details['bwidth-glottal-sine'],
 	 details['bwidth-nasal-pole'],
 	 details['bwidth-nasal-zero']
-	) + details['bwidth (1-6)'] +
-	details['formant-gain (2-6)'] + (
+	) + details['bwidth (1-6)'] +	details['formant-gain (2-6)'] + (
 	 details['formant-bypass-gain'],
 	 details['formant-cascade-gain'],
 	 details['formant-parallel-gain'],

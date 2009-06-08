@@ -71,10 +71,11 @@ def _main(input_file, options):
   	wave_form = waveform.WaveForm("output.wav", options.samplerate)
   	chomp_regexp = re.compile("\r?\n$")
 	for paragraph in open(input_file):
-		paragraph = comp_regexp.sub("", paragraph)
+		paragraph = chomp_regexp.sub("", paragraph)
 		if not paragraph: #Skip blank lines.
 			continue
-			
+		paragraph = paragraph.decode('utf-8')
+		
 		if options.verbose:
 			print "Processing '%s'..." % (paragraph)
 		for segment in transform.paragraphToSound(paragraph, options, synthesizer): #Convert and add the paragraph.
