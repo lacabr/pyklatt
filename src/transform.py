@@ -21,7 +21,7 @@ import parwave
 import universal_rules
 
 #'mnŋpbtdkgfvθðszʃʒhɹjwlieɛæaIəʊuoʌɔ'
-_IPA_CHARACTERS = u'mn\u014bpbtdkgfv\u03b8\xf0sz\u0283\u0292h\u0279jwlie\u025b\xe6aI\u0259\u028auo\u028c\u0254'
+_IPA_CHARACTERS = u'mn\u014bpbtd\u027ekgfv\u03b8\xf0sz\u0283\u0292h\u0279jwlie\u025b\xe6aI\u0259\u028auo\u028c\u0254'
 _WORD_REGEXP = re.compile('([*"]*)([%s][%s<>]*[:,]?)([*".!?]*)' % (_IPA_CHARACTERS, _IPA_CHARACTERS))
 
 _SENTENCE_QUESTION = 1
@@ -42,7 +42,7 @@ def paragraphToSound(paragraph, options, synthesizer):
 	if options.debug:
 		print sentences
 		
-	silent_half_second = ((0,) * (options.samples_per_frame / 2))
+	silent_half_second = synthesizer.generateSilence(500)
 	sounds = []
 	for (i, sentence) in enumerate(sentences): #Add the sentence, plus a half-second of silence.
 		sounds.append(_sentenceToSound(sentence, i + 1, len(sentences) - i - 1, options, synthesizer))
@@ -55,7 +55,7 @@ def _sentenceToSound(sentence, position, remaining_sentences, options, synthesiz
 	is_question = _SENTENCE_QUESTION in markup
 	is_exclamation = _SENTENCE_EXCLAMATION in markup
 	
-	silent_sixth_second = ((0,) * (options.samples_per_frame / 6))
+	silent_sixth_second = synthesizer.generateSilence(167)
 	sounds = ()
 	for (i, word) in enumerate(words): #Add the word, plus a sixth of a second of silence.
 		sounds += _wordToSound(word, i + 1, len(words) - i - 1, position, remaining_sentences, is_question, is_exclamation, options, synthesizer) + silent_sixth_second
@@ -69,7 +69,7 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 	
 	terminal_pause = ()
 	if token.endswith((',', ':')):
-		terminal_pause = ((0,) * (options.samples_per_frame / 6)) #A sixth of a second of silence.
+		terminal_pause = synthesizer.generateSilence(167) #A sixth of a second of silence.
 		token = token[:-1]
 		
 	phonemes = []
@@ -89,7 +89,6 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 	if options.verbose:
 		print "\tSynthesizing '%s'..." % (''.join([phoneme for (phoneme, multiplier) in phonemes]))
 		
-	synthesizer.reset()
 	sounds = ()
 	for (i, phoneme) in enumerate(phonemes):
 		sounds += _phonemeToSound(phoneme, [p for (p, d) in phonemes[:i]], [p for (p, d) in phonemes[i + 1:]], position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, options, synthesizer)
@@ -125,7 +124,7 @@ def _phonemeToSound(phoneme, preceding_sounds, following_sounds, word_position, 
 	for parameters in parameters_list:
 		if options.debug:
 			print parameters
-		sounds += synthesizer.synthesize(parameters, options)
+		sounds += synthesizer.synthesize(parameters, 120)
 	return sounds
 	
 def _extractSentence(tokens):

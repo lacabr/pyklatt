@@ -20,11 +20,11 @@ class WaveForm(object):
 	_finalized = False #: True when this file has been closed.
 	_wavefile = None #: The file into which wave data will be written.
 	
-	def __init__(self, filename, frequency):
+	def __init__(self, filename):
 		self._wavefile = wave.open(filename, 'wb')
 		self._wavefile.setnchannels(1) #Mono.
 		self._wavefile.setsampwidth(2) #16-bit.
-		self._wavefile.setframerate(frequency)
+		self._wavefile.setframerate(10000) #10000 frames per second.
 		
 	def addSamples(self, samples):
 		if self._finalized:
