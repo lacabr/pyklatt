@@ -22,9 +22,7 @@ import math
 import random
 			
 class Synthesizer(object):
-	_noise = 0
-	_period_index = 0
-	_period_rising = True
+	_noise = 0.0
 	
 	def __init__(self):
 		pass
@@ -47,6 +45,13 @@ class Synthesizer(object):
 		  _Resonator(a5, b5, c5),
 		  _Resonator(a6, b6, c6)
 		 ),
+		 (
+		  _Resonator(a2, b2, c2),
+		  _Resonator(a3, b3, c3),
+		  _Resonator(a4, b4, c4),
+		  _Resonator(a5, b5, c5),
+		  _Resonator(a6, b6, c6)
+		 ),
 		 _Resonator(agp, bgp, cgp),
 		 _Resonator(ags, bgs, cgs),
 		 _Resonator(anp, bnp, cnp),
@@ -55,14 +60,12 @@ class Synthesizer(object):
 		)
 		
 	def _getNoise(self):
-		self._noise = random.uniform(-0.001, 0.001) + self._noise / 2
+		self._noise = random.uniform(-0.00001, 0.00001) + self._noise
 		return self._noise
 		
 	def generateSilence(self, milliseconds):
-		sounds = []
-		for t in xrange(milliseconds * 10):
-			sounds.append(self._getNoise() * 10000)
-		return tuple(sounds)
+		self._noise = 0.0
+		return (0,) * (milliseconds * 10)
 		
 	def synthesize(self, parameters, f0):
 		half_f0 = f0 / 2.0
@@ -74,7 +77,8 @@ class Synthesizer(object):
 		 ab, ah, af, av, avs,
 		 milliseconds) = parameters
 		
-		(resonators, glottal_pole_resonator, glottal_sine_resonator,
+		(cascade_resonators, parallel_resonators,
+		 glottal_pole_resonator, glottal_sine_resonator,
 		 nasal_pole_resonator, glottal_antiresonator,
 		 nasal_antiresonator) = self._initSynthesizers(
 		  (fgp, fgz, fgs, fnp, fnz, f1, f2, f3, f4, f5, f6),
@@ -83,41 +87,36 @@ class Synthesizer(object):
 		
 		sounds = []
 		last_result = 0
+		period_index = 0
 		for t in xrange(milliseconds * 10):
-			noise = self._getNoise() * 100
+			noise = self._getNoise()
 			
-			#Apply 0.666/f0-Hz wave modifier, to approximate flutter with trivial overhead.
-			if self._period_rising:
-				if self._period_index < f0:
-					self._period_index += 1
-				else:
-					self._period_rising = False
+			#Apply linear f0 approximation.
+			pulse = 0.0
+			if period_index >= f0:
+				pulse = 1.0
+				period_index = 0
 			else:
-				if self._period_index > 0:
-					self._period_index -= 2
-				else:
-					self._period_rising = True
-					
-			source = glottal_pole_resonator.resonate(max(0.0, self._period_index / half_f0))
+				period_index += 2
+				
+			source = glottal_pole_resonator.resonate(pulse)
 			source = (glottal_antiresonator.resonate(source) * av) + (glottal_sine_resonator.resonate(source) * avs)
 			source += noise * ah
 			source = nasal_pole_resonator.resonate(source)
 			source = nasal_antiresonator.resonate(source)
-			
 			frication = noise * af
 			
 			result = frication * ab
-			for (resonator, amplitude) in reversed(zip(resonators[1:], (a2, a3, a4, a5, a6))):
-				source = resonator.resonate(source, True)
-				result += resonator.resonate(frication * amplitude)
-			result += resonators[0].resonate(source)
+			for ((cascade_resonator, parallel_resonator), amplitude) in reversed(zip(zip(cascade_resonators[1:], parallel_resonators), (a2, a3, a4, a5, a6))):
+				source = cascade_resonator.resonate(source)
+				result += parallel_resonator.resonate(frication * amplitude)
+			result += cascade_resonators[0].resonate(source)
 			
-			last_result = int(result - last_result)
-			if last_result > 32767:
-				last_result = 32767
-			elif last_result < -32767:
-				last_result = -32767
-			sounds.append(last_result)
+			output = int((result - last_result) * 32767.0)
+			last_result = result
+			while abs(output) >= 32767:
+				output /= 3
+			sounds.append(output)
 		return tuple(sounds)
 		
 class _Resonator(object):
@@ -135,16 +134,14 @@ class _Resonator(object):
 	def reset(self):
 		self._p1 = self._p2 = 0.0
 		
-	def _resonate(self, input, suppress_resonance=False):
+	def _resonate(self, input):
 		output = self._a * input + self._b * self._delay_1 + self._c * self._delay_2
-		if not suppress_resonance:
-			self._delay_2 = self._delay_1
+		self._delay_2 = self._delay_1
 		return output
 		
-	def resonate(self, input, suppress_resonance=False):
-		output = self._resonate(input, suppress_resonance)
-		if not suppress_resonance:
-			self._delay_1 = output
+	def resonate(self, input):
+		output = self._resonate(input)
+		self._delay_1 = output
 		return output
 		
 class _AntiResonator(_Resonator):

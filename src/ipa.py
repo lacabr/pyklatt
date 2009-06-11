@@ -61,7 +61,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 40,
   'voicing-sine-gain': 50,
-  'nominal-duration': 150,
+  'nominal-duration': 75,
   'vowel': False,
   'nasal': True,
   'regions': [LABIAL]
@@ -85,7 +85,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 40,
   'voicing-sine-gain': 50,
-  'nominal-duration': 150,
+  'nominal-duration': 75,
   'vowel': False,
   'nasal': True,
   'regions': [CORONAL]
@@ -109,7 +109,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 40,
   'voicing-sine-gain': 50,
-  'nominal-duration': 150,
+  'nominal-duration': 75,
   'vowel': False,
   'nasal': True,
   'regions': [DORSAL]
@@ -133,7 +133,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 20,
   'voicing-linear-gain': 0,
   'voicing-sine-gain': 0,
-  'nominal-duration': 150,
+  'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
   'regions': [LABIAL]
@@ -157,7 +157,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 10,
   'voicing-linear-gain': 20,
   'voicing-sine-gain': 20,
-  'nominal-duration': 150,
+  'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
   'regions': [LABIAL]
@@ -181,7 +181,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 20,
   'voicing-linear-gain': 0,
   'voicing-sine-gain': 0,
-  'nominal-duration': 150,
+  'nominal-duration': 25,
   'vowel': False,
   'nasal': False,
   'regions': [CORONAL]
@@ -205,7 +205,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 10,
   'voicing-linear-gain': 20,
   'voicing-sine-gain': 20,
-  'nominal-duration': 150,
+  'nominal-duration': 25,
   'vowel': False,
   'nasal': False,
   'regions': [CORONAL]
@@ -229,7 +229,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 15,
   'voicing-linear-gain': 10,
   'voicing-sine-gain': 10,
-  'nominal-duration': 100,
+  'nominal-duration': 25,
   'vowel': False,
   'nasal': False,
   'regions': [CORONAL]
@@ -253,7 +253,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 20,
   'voicing-linear-gain': 0,
   'voicing-sine-gain': 0,
-  'nominal-duration': 150,
+  'nominal-duration': 25,
   'vowel': False,
   'nasal': False,
   'regions': [DORSAL]
@@ -277,7 +277,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 10,
   'voicing-linear-gain': 20,
   'voicing-sine-gain': 20,
-  'nominal-duration': 150,
+  'nominal-duration': 25,
   'vowel': False,
   'nasal': False,
   'regions': [DORSAL]
@@ -301,7 +301,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 20,
   'voicing-linear-gain': 0,
   'voicing-sine-gain': 0,
-  'nominal-duration': 150,
+  'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
   'regions': [LABIAL]
@@ -325,7 +325,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 20,
   'voicing-linear-gain': 47,
   'voicing-sine-gain': 47,
-  'nominal-duration': 150,
+  'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
   'regions': [LABIAL]
@@ -349,7 +349,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 20,
   'voicing-linear-gain': 0,
   'voicing-sine-gain': 0,
-  'nominal-duration': 150,
+  'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
   'regions': [CORONAL]
@@ -373,7 +373,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 20,
   'voicing-linear-gain': 47,
   'voicing-sine-gain': 47,
-  'nominal-duration': 150,
+  'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
   'regions': [CORONAL]
@@ -397,7 +397,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 20,
   'voicing-linear-gain': 0,
   'voicing-sine-gain': 0,
-  'nominal-duration': 150,
+  'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
   'regions': [CORONAL]
@@ -421,7 +421,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 20,
   'voicing-linear-gain': 47,
   'voicing-sine-gain': 47,
-  'nominal-duration': 150,
+  'nominal-duration': 65,
   'vowel': False,
   'nasal': False,
   'regions': [CORONAL]
@@ -445,7 +445,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 20,
   'voicing-linear-gain': 0,
   'voicing-sine-gain': 0,
-  'nominal-duration': 150,
+  'nominal-duration': 75,
   'vowel': False,
   'nasal': False,
   'regions': [CORONAL]
@@ -469,7 +469,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 20,
   'voicing-linear-gain': 47,
   'voicing-sine-gain': 47,
-  'nominal-duration': 150,
+  'nominal-duration': 75,
   'vowel': False,
   'nasal': False,
   'regions': [CORONAL]
@@ -493,7 +493,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 25,
   'voicing-sine-gain': 0,
-  'nominal-duration': 150,
+  'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
   'regions': [GLOTTAL]
@@ -517,7 +517,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 50,
   'voicing-sine-gain': 0,
-  'nominal-duration': 150,
+  'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
   'regions': [CORONAL]
@@ -541,7 +541,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 50,
   'voicing-sine-gain': 0,
-  'nominal-duration': 150,
+  'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
   'regions': [DORSAL]
@@ -565,7 +565,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 50,
   'voicing-sine-gain': 0,
-  'nominal-duration': 150,
+  'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
   'regions': [CORONAL]
@@ -589,7 +589,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 50,
   'voicing-sine-gain': 0,
-  'nominal-duration': 150,
+  'nominal-duration': 65,
   'vowel': False,
   'nasal': False,
   'regions': [LABIAL, DORSAL]
@@ -614,7 +614,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 60,
   'voicing-sine-gain': 0,
-  'nominal-duration': 275,
+  'nominal-duration': 150,
   'vowel': True,
   'nasal': False,
   'regions': [FRONT]
@@ -638,7 +638,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 60,
   'voicing-sine-gain': 0,
-  'nominal-duration': 275,
+  'nominal-duration': 150,
   'vowel': True,
   'nasal': False,
   'regions': [FRONT]
@@ -662,7 +662,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 60,
   'voicing-sine-gain': 0,
-  'nominal-duration': 225,
+  'nominal-duration': 125,
   'vowel': True,
   'nasal': False,
   'regions': [NEAR_FRONT]
@@ -686,7 +686,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 60,
   'voicing-sine-gain': 0,
-  'nominal-duration': 325,
+  'nominal-duration': 200,
   'vowel': True,
   'nasal': False,
   'regions': [NEAR_FRONT]
@@ -710,7 +710,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 60,
   'voicing-sine-gain': 0,
-  'nominal-duration': 300,
+  'nominal-duration': 175,
   'vowel': True,
   'nasal': False,
   'regions': [CENTRAL]
@@ -734,7 +734,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 60,
   'voicing-sine-gain': 0,
-  'nominal-duration': 225,
+  'nominal-duration': 150,
   'vowel': True,
   'nasal': False,
   'regions': [NEAR_FRONT]
@@ -758,7 +758,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 50,
   'voicing-sine-gain': 0,
-  'nominal-duration': 175,
+  'nominal-duration': 125,
   'vowel': True,
   'nasal': False,
   'regions': [CENTRAL]
@@ -782,7 +782,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 60,
   'voicing-sine-gain': 0,
-  'nominal-duration': 225,
+  'nominal-duration': 125,
   'vowel': True,
   'nasal': False,
   'regions': [NEAR_BACK]
@@ -806,7 +806,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 60,
   'voicing-sine-gain': 0,
-  'nominal-duration': 275,
+  'nominal-duration': 150,
   'vowel': True,
   'nasal': False,
   'regions': [BACK]
@@ -830,7 +830,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 60,
   'voicing-sine-gain': 0,
-  'nominal-duration': 275,
+  'nominal-duration': 150,
   'vowel': True,
   'nasal': False,
   'regions': [BACK]
@@ -854,7 +854,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 60,
   'voicing-sine-gain': 0,
-  'nominal-duration': 200,
+  'nominal-duration': 100,
   'vowel': True,
   'nasal': False,
   'regions': [BACK]
@@ -878,7 +878,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 60,
   'voicing-sine-gain': 0,
-  'nominal-duration': 275,
+  'nominal-duration': 150,
   'vowel': True,
   'nasal': False,
   'regions': [BACK]
@@ -886,7 +886,7 @@ _IPA_MAPPING = {
 } #: A neatly organized dictionary to make it easier for linguists to alter settings.
 
 _IPA_CLUSTERS = (
- (('d', '\u0292'), (
+ (('d', '\u0292'), ( #dʒ
   0, 1500, 0, #Glottal frequencies.
   250, 250, #Nasal frequencies.
   260, 1800, 2820, 3300, 3750, 4900, #Formant frequencies.
@@ -899,9 +899,9 @@ _IPA_CLUSTERS = (
   10, #Formant parallel gain.
   37, #Voicing linear gain.
   37, #Voicing sinusoidal gain.
-  150 #Nominal duration.
- )),
- (('t', '\u0283'), (
+  100 #Nominal duration.
+ )), 
+ (('t', '\u0283'), ( #tʃ
   0, 1500, 0, #Glottal frequencies.
   250, 250, #Nasal frequencies.
   350, 1800, 2820, 3300, 3750, 4900, #Formant frequencies.
@@ -914,7 +914,7 @@ _IPA_CLUSTERS = (
   10, #Formant parallel gain.
   0, #Voicing linear gain.
   0, #Voicing sinusoidal gain.
-  150 #Nominal duration.
+  100 #Nominal duration.
  )),
  (('a', 'j'), (
   0, 1500, 0, #Glottal frequencies.
@@ -929,7 +929,7 @@ _IPA_CLUSTERS = (
   0, #Formant parallel gain.
   60, #Voicing linear gain.
   0, #Voicing sinusoidal gain.
-  325 #Nominal duration.
+  150 #Nominal duration.
  )),
  (('a', 'w'), (
   0, 1500, 0, #Glottal frequencies.
@@ -944,9 +944,9 @@ _IPA_CLUSTERS = (
   0, #Formant parallel gain.
   60, #Voicing linear gain.
   0, #Voicing sinusoidal gain.
-  325 #Nominal duration.
+  150 #Nominal duration.
  )),
- (('\u0254', 'j'), (
+ (('\u0254', 'j'), ( #ɔj
   0, 1500, 0, #Glottal frequencies.
   250, 250, #Nasal frequencies.
   550, 960, 2400, 3300, 3750, 4900, #Formant frequencies.
@@ -959,7 +959,7 @@ _IPA_CLUSTERS = (
   0, #Formant parallel gain.
   60, #Voicing linear gain.
   0, #Voicing sinusoidal gain.
-  325 #Nominal duration.
+  150 #Nominal duration.
  ))
 ) #: An arbitrary mapping of complex IPA symbols that need to be specially handled.
 

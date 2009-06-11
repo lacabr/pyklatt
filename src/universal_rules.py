@@ -56,10 +56,10 @@ def nasalizeVowel(ipa_character, following_sounds, parameters_list):
 	 bw1, bw2, bw3, bw4, bw5, bw6,
 	 a2, a3, a4, a5, a6,
 	 ab, ah, af, av, avs,
-	 min(100, duration - 100)]
+	 max(100, duration - 100)]
 	 
 	#Add nasalized terminator.
-	parameters_list.insert(0, (
+	parameters_list.insert(1, (
 	 fgp, fgz, fgs, 270, 450,
 	 f1 + 100, f2 + 100, f3 + 100, f4, f5, f6,
 	 bgp, bgz, bgs, bnp, bnz,

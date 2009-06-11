@@ -124,7 +124,7 @@ def _phonemeToSound(phoneme, preceding_sounds, following_sounds, word_position, 
 	for parameters in parameters_list:
 		if options.debug:
 			print parameters
-		sounds += synthesizer.synthesize(parameters, 10)
+		sounds += synthesizer.synthesize(parameters, 160)
 	return sounds
 	
 def _extractSentence(tokens):
