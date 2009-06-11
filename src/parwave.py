@@ -36,7 +36,7 @@ class Synthesizer(object):
 		
 		b = (bgp, bgz, bgs, bnp, bnz, b1, b2, b3, b4, b5, b6) = [n * m for (n, m) in zip([math.cos(pi_2_div * f) for f in frequencies], [2 * math.e ** (pi_neg_div * bw) for bw in bandwidths])]
 		c = (cgp, cgz, cgs, cnp, cnz, c1, c2, c3, c4, c5, c6) = [-math.e ** (pi_neg_2_div * bw) for bw in bandwidths]
-		(agp, agz, ags, anp, anz, a1, a2, a3, a4, a5, a6) = [1 - b - c for (b, c) in zip(b, c)]
+		a = (agp, agz, ags, anp, anz, a1, a2, a3, a4, a5, a6) = [1 - b_v - c_v for (b_v, c_v) in zip(b, c)]
 		
 		return (
 		 (
@@ -61,7 +61,7 @@ class Synthesizer(object):
 	def generateSilence(self, milliseconds):
 		sounds = []
 		for t in xrange(milliseconds * 10):
-			sounds.append(self._getNoise())
+			sounds.append(self._getNoise() * 10000)
 		return tuple(sounds)
 		
 	def synthesize(self, parameters, f0):
@@ -84,8 +84,9 @@ class Synthesizer(object):
 		sounds = []
 		last_result = 0
 		for t in xrange(milliseconds * 10):
-			noise = self._getNoise()
+			noise = self._getNoise() * 100
 			
+			#Apply 0.666/f0-Hz wave modifier, to approximate flutter with trivial overhead.
 			if self._period_rising:
 				if self._period_index < f0:
 					self._period_index += 1
@@ -93,11 +94,11 @@ class Synthesizer(object):
 					self._period_rising = False
 			else:
 				if self._period_index > 0:
-					self._period_index -= 1
+					self._period_index -= 2
 				else:
 					self._period_rising = True
-			
-			source = glottal_pole_resonator.resonate(self._period_index / half_f0)
+					
+			source = glottal_pole_resonator.resonate(max(0.0, self._period_index / half_f0))
 			source = (glottal_antiresonator.resonate(source) * av) + (glottal_sine_resonator.resonate(source) * avs)
 			source += noise * ah
 			source = nasal_pole_resonator.resonate(source)
@@ -106,10 +107,10 @@ class Synthesizer(object):
 			frication = noise * af
 			
 			result = frication * ab
-			for (resonator, amplitude) in reversed(zip(resonators, (1.0, a2, a3, a4, a5, a6))):
-				source = resonator.resonate(source)
+			for (resonator, amplitude) in reversed(zip(resonators[1:], (a2, a3, a4, a5, a6))):
+				source = resonator.resonate(source, True)
 				result += resonator.resonate(frication * amplitude)
-			result += source
+			result += resonators[0].resonate(source)
 			
 			last_result = int(result - last_result)
 			if last_result > 32767:
@@ -117,7 +118,6 @@ class Synthesizer(object):
 			elif last_result < -32767:
 				last_result = -32767
 			sounds.append(last_result)
-			print last_result
 		return tuple(sounds)
 		
 class _Resonator(object):
@@ -135,14 +135,16 @@ class _Resonator(object):
 	def reset(self):
 		self._p1 = self._p2 = 0.0
 		
-	def _resonate(self, input):
+	def _resonate(self, input, suppress_resonance=False):
 		output = self._a * input + self._b * self._delay_1 + self._c * self._delay_2
-		self._delay_2 = self._delay_1
+		if not suppress_resonance:
+			self._delay_2 = self._delay_1
 		return output
 		
-	def resonate(self, input):
-		output = self._resonate(input)
-		self._delay_1 = output
+	def resonate(self, input, suppress_resonance=False):
+		output = self._resonate(input, suppress_resonance)
+		if not suppress_resonance:
+			self._delay_1 = output
 		return output
 		
 class _AntiResonator(_Resonator):
