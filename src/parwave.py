@@ -112,13 +112,16 @@ class Synthesizer(object):
 				result += parallel_resonator.resonate(frication * amplitude)
 			result += cascade_resonators[0].resonate(source)
 			
-			output = int((result - last_result) * 32767.0)
+			output = result - last_result
 			last_result = result
-			if output > 16383:
-				output = 16383
-			elif output < -16383:
-				output = -16383
-			sounds.append(output)
+			if t > 15: #Skip the first 15 values to avoid popping.
+				output = int(output * 32767.0)
+				if output > 16383:
+					output = 16383
+				elif output < -16383:
+					output = -16383
+				
+				sounds.append(output)
 		return tuple(sounds)
 		
 class _Resonator(object):
