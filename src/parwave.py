@@ -87,7 +87,7 @@ class Synthesizer(object):
 		
 		sounds = []
 		last_result = 0
-		period_index = 0
+		period_index = f0
 		for t in xrange(milliseconds * 10):
 			noise = self._getNoise()
 			
