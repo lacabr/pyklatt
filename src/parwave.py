@@ -114,8 +114,10 @@ class Synthesizer(object):
 			
 			output = int((result - last_result) * 32767.0)
 			last_result = result
-			while abs(output) >= 32767:
-				output /= 3
+			if output > 16383:
+				output = 16383
+			elif output < -16383:
+				output = -16383
 			sounds.append(output)
 		return tuple(sounds)
 		

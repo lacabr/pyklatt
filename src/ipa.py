@@ -517,7 +517,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 50,
   'voicing-sine-gain': 0,
-  'nominal-duration': 50,
+  'nominal-duration': 100,
   'vowel': False,
   'nasal': False,
   'regions': [CORONAL]
@@ -565,7 +565,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 50,
   'voicing-sine-gain': 0,
-  'nominal-duration': 50,
+  'nominal-duration': 100,
   'vowel': False,
   'nasal': False,
   'regions': [CORONAL]
