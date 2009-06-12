@@ -17,8 +17,9 @@ import ipa
 
 def nasalizeVowel(ipa_character, following_sounds, parameters_list):
 	"""
-	Lops off 0.1s from the end of the current sound, if it's a vowel followed by
-	a nasal, and inserts 0.1s of a nasalized variant of the vowel's parameters.
+	Lops off 0.05s from the end of the current sound, if it's a vowel followed by
+	a nasal, and inserts 0.05s of two nasalized variants of the vowel's
+	parameters.
 	
 	Nasalization concept inspired by a function described in "Klatt Synthesizer
 	in Simulink®", a graduate research paper written by Sean McLennan in 2000 for
@@ -48,7 +49,7 @@ def nasalizeVowel(ipa_character, following_sounds, parameters_list):
 	 ab, ah, af, av, avs,
 	 duration) = parameters_list[0]
 	
-	#Reduce duration by 100ms.
+	#Reduce duration by 50ms.
 	parameters_list[0] = [
 	 fgp, fgz, fgs, fnp, fnz,
 	 f1, f2, f3, f4, f5, f6,
@@ -66,7 +67,17 @@ def nasalizeVowel(ipa_character, following_sounds, parameters_list):
 	 min(40, bw1 - 10), bw2 * 1.25, max(300, bw3 * 1.5), bw4, bw5, bw6,
 	 a2, a3, a4, a5, a6,
 	 ab, ah, af, 50, 30,
-	 50)
+	 25)
+	)
+	#Add half-nasalized step.
+	parameters_list.insert(1, (
+	 fgp, fgz, fgs, 250, 400,
+	 f1 + 50, f2 + 50, f3 + 50, f4, f5, f6,
+	 bgp, bgz, bgs, bnp, bnz,
+	 min(40, bw1 - 10), bw2 * 1.125, max(300, bw3 * 1.25), bw4, bw5, bw6,
+	 a2, a3, a4, a5, a6,
+	 ab, ah, af, 50, 30,
+	 25)
 	)
 	
 	return parameters_list
