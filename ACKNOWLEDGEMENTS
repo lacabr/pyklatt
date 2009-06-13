@@ -15,3 +15,14 @@ The C implementation, released under the GPLv1, was retrieved from
 	http://www.cs.cmu.edu/afs/cs/project/ai-repository/ai/areas/speech/systems/
 	klatt/0.html
 on June 6, 2009.
+
+
+This project borrows algorithmic enhancements and inspiration from a Simulink®
+implementation of the Klatt Synthesizer model, as described by Sean McLennan in
+2000 for S522 - Digital Signal Processing under Dr. Diane Kewley-Port at Indiana
+University.
+
+This paper, believed to be published as public-domain or otherwise academics-
+friendly terms, was retrieved from
+	http://www.shaav.com/professional/linguistics/klatt.pdf
+on June 7th, 2009.

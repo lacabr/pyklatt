@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Klatt CPSC 599 module: src.ipa
+CPSC 599 module: src.ipa
 
 Purpose
 =======
@@ -9,7 +9,7 @@ Purpose
 Limitations
 ===========
  At present, only the following IPA symbols are supported:
-  mnŋpbtdkgfvθðszʃʒhɹjwl
+  mnŋpbtdɾkgfvθðszʃʒhɹjwl
   ieɛæaIəʊuoʌɔ
  
 Legal
@@ -17,29 +17,24 @@ Legal
  All code, unless otherwise indicated, is original, and subject to the
  terms of the GPLv2, which is provided in COPYING.
  
- Resonator data and interpretation logic derived from "Klatt Synthesizer in
- Simulink®", a graduate research paper written by Sean McLennan in 2000 for
- S522 - Digital Signal Processing under Dr. Diane Kewley-Port at Indiana
- University. This information, lacking in-text licensing terms, is presumed to
- have been published as public-domain work or otherwise under terms agreeable to
- non-commercial academic research.
- 
- The referenced paper was retrieved from
- http://www.shaav.com/professional/linguistics/klatt.pdf on June 7th, 2009.
+ This project borrows algorithms, ideas, and statistical data from other
+ projects. Full attribution is provided in ACKNOWLEDGEMENTS.
  
  (C) Neil Tallim, Sydni Bennie, 2009
 """
-LABIAL = 1
-CORONAL = 2
-DORSAL = 3
-RADICAL = 4
-GLOTTAL = 5
+#Enumerations of consonant positions.
+LABIAL = 1 #: Identifies a consonant as labial.
+CORONAL = 2 #: Identifies a consonant as coronal.
+DORSAL = 3 #: Identifies a consonant as dorsal.
+RADICAL = 4 #: Identifies a consonant as radical.
+GLOTTAL = 5 #: Identifies a consonant as glottal.
 
-FRONT = 1
-NEAR_FRONT = 2
-CENTRAL = 3
-NEAR_BACK = 4
-BACK = 5
+#Enumerations of vowel positions.
+FRONT = 1 #: Identifies a vowel as front-wards.
+NEAR_FRONT = 2 #: Identifies a vowel as near-front.
+CENTRAL = 3 #: Identifies a vowel as central.
+NEAR_BACK = 4 #: Identifies a vowel as near-back.
+BACK = 5 #: Identifies a vowel as back-wards.
 
 _IPA_MAPPING = {
  u'm': {
@@ -64,6 +59,7 @@ _IPA_MAPPING = {
   'nominal-duration': 75,
   'vowel': False,
   'nasal': True,
+  'voice': True,
   'regions': [LABIAL]
  },
  u'n': {
@@ -88,6 +84,7 @@ _IPA_MAPPING = {
   'nominal-duration': 75,
   'vowel': False,
   'nasal': True,
+  'voice': True,
   'regions': [CORONAL]
  },
  u'\u014b': { #ŋ
@@ -112,6 +109,7 @@ _IPA_MAPPING = {
   'nominal-duration': 75,
   'vowel': False,
   'nasal': True,
+  'voice': True,
   'regions': [DORSAL]
  },
  u'p': {
@@ -136,6 +134,7 @@ _IPA_MAPPING = {
   'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
+  'voice': False,
   'regions': [LABIAL]
  },
  u'b': {
@@ -160,6 +159,7 @@ _IPA_MAPPING = {
   'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
+  'voice': True,
   'regions': [LABIAL]
  },
  u't': {
@@ -184,6 +184,7 @@ _IPA_MAPPING = {
   'nominal-duration': 25,
   'vowel': False,
   'nasal': False,
+  'voice': False,
   'regions': [CORONAL]
  },
  u'd': {
@@ -208,9 +209,10 @@ _IPA_MAPPING = {
   'nominal-duration': 25,
   'vowel': False,
   'nasal': False,
+  'voice': True,
   'regions': [CORONAL]
  },
- u'ɾ': {
+ u'\u027e': { #ɾ
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -232,6 +234,7 @@ _IPA_MAPPING = {
   'nominal-duration': 25,
   'vowel': False,
   'nasal': False,
+  'voice': True,
   'regions': [CORONAL]
  },
  u'k': {
@@ -256,6 +259,7 @@ _IPA_MAPPING = {
   'nominal-duration': 25,
   'vowel': False,
   'nasal': False,
+  'voice': False,
   'regions': [DORSAL]
  },
  u'g': {
@@ -280,6 +284,7 @@ _IPA_MAPPING = {
   'nominal-duration': 25,
   'vowel': False,
   'nasal': False,
+  'voice': True,
   'regions': [DORSAL]
  },
  u'f': {
@@ -304,6 +309,7 @@ _IPA_MAPPING = {
   'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
+  'voice': False,
   'regions': [LABIAL]
  },
  u'v': {
@@ -328,6 +334,7 @@ _IPA_MAPPING = {
   'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
+  'voice': True,
   'regions': [LABIAL]
  },
  u'\u03b8': { #θ
@@ -352,6 +359,7 @@ _IPA_MAPPING = {
   'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
+  'voice': False,
   'regions': [CORONAL]
  },
  u'\xf0': { #ð
@@ -376,6 +384,7 @@ _IPA_MAPPING = {
   'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
+  'voice': True,
   'regions': [CORONAL]
  },
  u's': {
@@ -400,6 +409,7 @@ _IPA_MAPPING = {
   'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
+  'voice': False,
   'regions': [CORONAL]
  },
  u'z': {
@@ -424,6 +434,7 @@ _IPA_MAPPING = {
   'nominal-duration': 65,
   'vowel': False,
   'nasal': False,
+  'voice': True,
   'regions': [CORONAL]
  },
  u'\u0283': { #ʃ
@@ -448,6 +459,7 @@ _IPA_MAPPING = {
   'nominal-duration': 75,
   'vowel': False,
   'nasal': False,
+  'voice': False,
   'regions': [CORONAL]
  },
  u'\u0292': { #ʒ
@@ -472,6 +484,7 @@ _IPA_MAPPING = {
   'nominal-duration': 75,
   'vowel': False,
   'nasal': False,
+  'voice': True,
   'regions': [CORONAL]
  },
  u'h': {
@@ -496,6 +509,7 @@ _IPA_MAPPING = {
   'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
+  'voice': False,
   'regions': [GLOTTAL]
  },
  u'\u0279': { #ɹ
@@ -520,6 +534,7 @@ _IPA_MAPPING = {
   'nominal-duration': 100,
   'vowel': False,
   'nasal': False,
+  'voice': True,
   'regions': [CORONAL]
  },
  u'j': {
@@ -544,6 +559,7 @@ _IPA_MAPPING = {
   'nominal-duration': 50,
   'vowel': False,
   'nasal': False,
+  'voice': True,
   'regions': [DORSAL]
  },
  u'l': {
@@ -568,6 +584,7 @@ _IPA_MAPPING = {
   'nominal-duration': 100,
   'vowel': False,
   'nasal': False,
+  'voice': True,
   'regions': [CORONAL]
  },
  u'w': {
@@ -592,6 +609,7 @@ _IPA_MAPPING = {
   'nominal-duration': 65,
   'vowel': False,
   'nasal': False,
+  'voice': True,
   'regions': [LABIAL, DORSAL]
  },
 ###############################################################################
@@ -617,6 +635,7 @@ _IPA_MAPPING = {
   'nominal-duration': 150,
   'vowel': True,
   'nasal': False,
+  'voice': True,
   'regions': [FRONT]
  },
  u'e': {
@@ -641,6 +660,7 @@ _IPA_MAPPING = {
   'nominal-duration': 150,
   'vowel': True,
   'nasal': False,
+  'voice': True,
   'regions': [FRONT]
  },
  u'\u025b': { #ɛ
@@ -665,6 +685,7 @@ _IPA_MAPPING = {
   'nominal-duration': 125,
   'vowel': True,
   'nasal': False,
+  'voice': True,
   'regions': [NEAR_FRONT]
  },
  u'\xe6': { #æ
@@ -689,6 +710,7 @@ _IPA_MAPPING = {
   'nominal-duration': 200,
   'vowel': True,
   'nasal': False,
+  'voice': True,
   'regions': [NEAR_FRONT]
  },
  u'a': {
@@ -713,6 +735,7 @@ _IPA_MAPPING = {
   'nominal-duration': 175,
   'vowel': True,
   'nasal': False,
+  'voice': True,
   'regions': [CENTRAL]
  },
  u'I': {
@@ -737,6 +760,7 @@ _IPA_MAPPING = {
   'nominal-duration': 150,
   'vowel': True,
   'nasal': False,
+  'voice': True,
   'regions': [NEAR_FRONT]
  },
  u'\u0259': { #ə
@@ -761,6 +785,7 @@ _IPA_MAPPING = {
   'nominal-duration': 125,
   'vowel': True,
   'nasal': False,
+  'voice': True,
   'regions': [CENTRAL]
  },
  u'\u028a': { #ʊ
@@ -785,6 +810,7 @@ _IPA_MAPPING = {
   'nominal-duration': 125,
   'vowel': True,
   'nasal': False,
+  'voice': True,
   'regions': [NEAR_BACK]
  },
  u'u': {
@@ -809,6 +835,7 @@ _IPA_MAPPING = {
   'nominal-duration': 150,
   'vowel': True,
   'nasal': False,
+  'voice': True,
   'regions': [BACK]
  },
  u'o': {
@@ -833,6 +860,7 @@ _IPA_MAPPING = {
   'nominal-duration': 150,
   'vowel': True,
   'nasal': False,
+  'voice': True,
   'regions': [BACK]
  },
  u'\u028c': { #ʌ
@@ -857,6 +885,7 @@ _IPA_MAPPING = {
   'nominal-duration': 100,
   'vowel': True,
   'nasal': False,
+  'voice': True,
   'regions': [BACK]
  },
  u'\u0254': { #ɔ
@@ -881,9 +910,10 @@ _IPA_MAPPING = {
   'nominal-duration': 150,
   'vowel': True,
   'nasal': False,
+  'voice': True,
   'regions': [BACK]
  }
-} #: A neatly organized dictionary to make it easier for linguists to alter settings.
+} #: A neatly organized dictionary to make it easier for linguists to alter parameters.
 
 _IPA_CLUSTERS = (
  (('d', '\u0292'), ( #dʒ
@@ -961,15 +991,17 @@ _IPA_CLUSTERS = (
   0, #Voicing sinusoidal gain.
   150 #Nominal duration.
  ))
-) #: An arbitrary mapping of complex IPA symbols that need to be specially handled.
+) #: An arbitrary mapping of multi-character IPA symbols that need to be reduced during phoneme pre-processing.
 
 #Reduce IPA data to efficient structures.
-VOWELS = tuple([ipa_character for (ipa_character, details) in _IPA_MAPPING.iteritems() if details['vowel']])
-NASALS = tuple([ipa_character for (ipa_character, details) in _IPA_MAPPING.iteritems() if details['nasal']])
-IPA_PARAMETERS = {}
-IPA_REGIONS = {}
-IPA_DATA = {}
+VOWELS = tuple([ipa_character for (ipa_character, details) in _IPA_MAPPING.iteritems() if details['vowel']]) #: A list of all vowel phonemes.
+NASALS = tuple([ipa_character for (ipa_character, details) in _IPA_MAPPING.iteritems() if details['nasal']]) #: A list of all nasal phonemes.
+VOICED = tuple([ipa_character for (ipa_character, details) in _IPA_MAPPING.iteritems() if details['voice']]) #: A list of all voiced phonemes.
+IPA_PARAMETERS = {} #: A collection of synthesizing parameter tuples, keyed by corresponding IPA character.
+IPA_REGIONS = {} #: A collection of phoneme regions, keyed by corresponding IPA character.
+IPA_DATA = {} #: A collection of both parameters and regions, in a tuple, keyed by corresponding IPA character.
 for (ipa_character, details) in _IPA_MAPPING.iteritems():
+	#Extract an ordered tuple of data from the dictionary.
 	parameters = (
 	 details['freq-glottal-pole'],
 	 details['freq-glottal-zero'],
@@ -990,19 +1022,46 @@ for (ipa_character, details) in _IPA_MAPPING.iteritems():
 	 details['voicing-sine-gain'],
 	 details['nominal-duration']
 	)
-	regions = tuple(details['regions'])
+	regions = tuple(details['regions']) #Extract region data.
 	
+	#Place extracted data into more efficient indexes.
 	IPA_PARAMETERS[ipa_character] = parameters
 	IPA_REGIONS[ipa_character] = regions
 	IPA_DATA[ipa_character] = (parameters, regions)
 del _IPA_MAPPING
 
 
-def screenIPAClusters(ipa_character, preceding_sounds, following_sounds):
+def screenIPAClusters(ipa_character, preceding_phonemes, following_phonemes):
+	"""
+	Determines whether the given IPA character is part of a multi-character
+	sequence, and returns appropriate parameters or dismisses the character
+	accordingly.
+	
+	The first character in such a sequence is ignored so that markup and
+	rule-processing may be applied to the second character, which is more
+	intuitive from a data-entry perspective.
+	
+	@type ipa_character: unicode
+	@param ipa_character: The character, representative of a phoneme, being
+	    processed.
+	@type preceding_phonemes: sequence
+	@param preceding_phonemes: A collection of all phonemes, in order, that
+	    precede the current IPA character in the current word.
+	@type following_phonemes: sequence
+	@param following_phonemes: A collection of all phonemes, in order, that
+	    follow the current IPA character in the current word.
+	
+	@rtype: tuple(2)
+	@return: (False, None) if no processing needs to be applied; (True, None) if
+	    the current character should be ignored; (True, parameters) if specific
+	    parameters should be used instead of those normally associated with the
+	    current character, where parameters are presented in the same format as
+	    found in L{IPA_PARAMETERS}.
+	"""
 	for ((head, tail), parameters) in _IPA_CLUSTERS:
-		if head == ipa_character and following_sounds and following_sounds[0] == tail:
-			return (True, parameters)
-		elif tail == ipa_character and preceding_sounds and preceding_sounds[0] == head:
+		if head == ipa_character and following_phonemes and following_phonemes[0] == tail:
 			return (True, None)
+		elif tail == ipa_character and preceding_phonemes and preceding_phonemes[0] == head:
+			return (True, parameters)
 	return (False, None)
 	

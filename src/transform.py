@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Klatt CPSC 599 module: src.transform
+CPSC 599 module: src.transform
 
 Purpose
 =======
@@ -20,17 +20,37 @@ import language_rules
 import parwave
 import universal_rules
 
-#'mnŋpbtdkgfvθðszʃʒhɹjwlieɛæaIəʊuoʌɔ'
-_IPA_CHARACTERS = u'mn\u014bpbtd\u027ekgfv\u03b8\xf0sz\u0283\u0292h\u0279jwlie\u025b\xe6aI\u0259\u028auo\u028c\u0254'
-_WORD_REGEXP = re.compile('([*"]*)([%s][%s<>]*[:,]?)([*".!?]*)' % (_IPA_CHARACTERS, _IPA_CHARACTERS))
+#'mnŋpbtdɾkgfvθðszʃʒhɹjwlieɛæaIəʊuoʌɔ'
+_IPA_CHARACTERS = u'mn\u014bpbtd\u027ekgfv\u03b8\xf0sz\u0283\u0292h\u0279jwlie\u025b\xe6aI\u0259\u028auo\u028c\u0254' #: A list of all characters the regular expression will have to deal with; not unlike an IPA [A-Z].
+_WORD_REGEXP = re.compile('([*"]*)([%s][%s<>]*[:,]?)([*".!?]*)' % (_IPA_CHARACTERS, _IPA_CHARACTERS)) #: The regular expression that matches tokens in the input file.
 
-_SENTENCE_QUESTION = 1
-_SENTENCE_EXCLAMATION = 2
+#Sentence markup enumeration.
+_SENTENCE_QUESTION = 1 #: Identifies a sentence as a question.
+_SENTENCE_EXCLAMATION = 2 #: Identifies a sentence as an exclamation.
 
-_WORD_QUOTED = 1
-_WORD_EMPHASIZED = 2
+#Word markup enumeration.
+_WORD_QUOTED = 1 #: Identifies a word as being quoted.
+_WORD_EMPHASIZED = 2 #: Identifies a word as being emphasized.
 
 def paragraphToSound(paragraph, options, synthesizer):
+	"""
+	Transforms a paragraph into a collection of collections of integers,
+	representing synthesized speech.
+	
+	@type paragraph: unicode
+	@param paragraph: The text to be synthesized.
+	@type options: optparse.Values
+	@param options: The options with which synthesis should occur.
+	@type synthesizer: L{parwave.Synthesizer}
+	@param synthesizer: The synthesizer to use when rendering sounds.
+	
+	@rtype: list
+	@return: A list of tuples containing integers that represent synthesized
+	    speech.
+	"""
+	if options.verbose:
+			print "Processing '%s'..." % (paragraph)
+			
 	tokens = paragraph.split()
 	
 	sentences = []
@@ -42,7 +62,7 @@ def paragraphToSound(paragraph, options, synthesizer):
 	if options.debug:
 		print sentences
 		
-	silent_half_second = synthesizer.generateSilence(500)
+	silent_half_second = synthesizer.generateSilence(500) #Half of a second of silence.
 	sounds = []
 	for (i, sentence) in enumerate(sentences): #Add the sentence, plus a half-second of silence.
 		sounds.append(_sentenceToSound(sentence, i + 1, len(sentences) - i - 1, options, synthesizer))
@@ -50,31 +70,87 @@ def paragraphToSound(paragraph, options, synthesizer):
 	return sounds
 	
 def _sentenceToSound(sentence, position, remaining_sentences, options, synthesizer):
+	"""
+	Transforms a sentence into a collections of integers, representing
+	synthesized speech.
+	
+	@type sentence: tuple(2)
+	@param sentence: A collection of tokens comprising the words in the sentence,
+	    plus the sentence's markup flags.
+	@type position: int
+	@param position: The current sentence's position in its paragraph,
+	    indexed from 1.
+	@type remaining_sentences: int
+	@param remaining_sentences: The number of sentences remaining before the end
+	    of the paragraph is reached, not including the current sentence.
+	@type options: optparse.Values
+	@param options: The options with which synthesis should occur.
+	@type synthesizer: L{parwave.Synthesizer}
+	@param synthesizer: The synthesizer to use when rendering sounds.
+	
+	@rtype: tuple
+	@return: A collection of integers that represent synthesized speech.
+	"""
 	(words, markup) = sentence
 	
+	#Set markup flags.
 	is_question = _SENTENCE_QUESTION in markup
 	is_exclamation = _SENTENCE_EXCLAMATION in markup
 	
-	silent_sixth_second = synthesizer.generateSilence(167)
+	silent_tenth_second = synthesizer.generateSilence(100) #A tenth of a second of silence.
 	sounds = ()
-	for (i, word) in enumerate(words): #Add the word, plus a sixth of a second of silence.
-		sounds += _wordToSound(word, i + 1, len(words) - i - 1, position, remaining_sentences, is_question, is_exclamation, options, synthesizer) + silent_sixth_second
+	for (i, word) in enumerate(words):
+		#Add the word, plus a tenth of a second of silence.
+		sounds += _wordToSound(word, i + 1, len(words) - i - 1, position, remaining_sentences, is_question, is_exclamation, options, synthesizer) + silent_tenth_second
 	return sounds
 	
 def _wordToSound(word, position, remaining_words, sentence_position, remaining_sentences, is_question, is_exclamation, options, synthesizer):
+	"""
+	Transforms a word into a collections of integers, representing
+	synthesized speech.
+	
+	@type word: tuple(2)
+	@param word: The word being processed, plus the word's markup flags.
+	@type position: int
+	@param position: The current word's position in its sentence, indexed
+	    from 1.
+	@type remaining_words: int
+	@param remaining_words: The number of words remaining before the end of the
+	    sentence is reached, not including the current word.
+	@type sentence_position: int
+	@param sentence_position: The current sentence's position in its paragraph,
+	    indexed from 1.
+	@type remaining_sentences: int
+	@param remaining_sentences: The number of sentences remaining before the end
+	    of the paragraph is reached, not including the current sentence.
+	@type is_question: bool
+	@param is_question: True if the current sentence ends with a question mark.
+	@type is_exclamation: bool
+	@param is_exclamation: True if the current sentence ends with an exclamation
+	    mark.
+	@type options: optparse.Values
+	@param options: The options with which synthesis should occur.
+	@type synthesizer: L{parwave.Synthesizer}
+	@param synthesizer: The synthesizer to use when rendering sounds.
+	
+	@rtype: tuple
+	@return: A collection of integers that represent synthesized speech.
+	"""
 	(token, markup) = word
 	
+	#Determine whether the word ends with timing-affecting punctuation.
+	terminal_pause = token.endswith((u',', u':'))
+	if terminal_pause:
+		token = token[:-1]
+		
+	#Set markup flags.
 	is_quoted = _WORD_QUOTED in markup
 	is_emphasized = _WORD_EMPHASIZED in markup
 	
-	terminal_pause = ()
-	if token.endswith((',', ':')):
-		terminal_pause = synthesizer.generateSilence(167) #A sixth of a second of silence.
-		token = token[:-1]
-		
 	phonemes = []
-	multiplier = 1.0
 	subject = token[0]
+	multiplier = 1.0
+	#For each character in the token, collapse extension syntax into the multiplier associated with the last-seen character.
 	for i in token[1:]:
 		if i == '>':
 			multiplier *= 1.5
@@ -92,19 +168,62 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 	sounds = ()
 	for (i, phoneme) in enumerate(phonemes):
 		sounds += _phonemeToSound(phoneme, [p for (p, d) in phonemes[:i]], [p for (p, d) in phonemes[i + 1:]], position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, options, synthesizer)
+		if terminal_pause: #Add a tenth of a second of silence.
+			sounds += synthesizer.generateSilence(100)
 	return sounds
 	
-def _phonemeToSound(phoneme, preceding_sounds, following_sounds, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, options, synthesizer):
+def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, options, synthesizer):
+	"""
+	Transforms a phoneme into a collections of integers, representing
+	synthesized speech.
+	
+	@type phoneme: tuple(2)
+	@param word: The IPA character being processed, plus the phoneme's
+	    duration multiplier.
+	@param preceding_phonemes: A collection of all phonemes, in order, that
+	    precede the current IPA character in the current word.
+	@type following_phonemes: sequence
+	@param following_phonemes: A collection of all phonemes, in order, that
+	    follow the current IPA character in the current word.
+	@type word_position: int
+	@param word_position: The current word's position in its sentence, indexed
+	    from 1.
+	@type remaining_words: int
+	@param remaining_words: The number of words remaining before the end of the
+	    sentence is reached, not including the current word.
+	@type sentence_position: int
+	@param sentence_position: The current sentence's position in its paragraph,
+	    indexed from 1.
+	@type remaining_sentences: int
+	@param remaining_sentences: The number of sentences remaining before the end
+	    of the paragraph is reached, not including the current sentence.
+	@type is_quoted: bool
+	@param is_quoted: True if the current word is part of a quoted body.
+	@type is_emphasized: bool
+	@param is_quoted: True if the current word is part of an emphasized body.
+	@type is_question: bool
+	@param is_question: True if the current sentence ends with a question mark.
+	@type is_exclamation: bool
+	@param is_exclamation: True if the current sentence ends with an exclamation
+	    mark.
+	@type options: optparse.Values
+	@param options: The options with which synthesis should occur.
+	@type synthesizer: L{parwave.Synthesizer}
+	@param synthesizer: The synthesizer to use when rendering sounds.
+	
+	@rtype: tuple
+	@return: A collection of integers that represent synthesized speech.
+	"""
 	(ipa_character, duration_multiplier) = phoneme
 	
 	#Retrieve synthesis parameters.
 	regions = None
-	(handled, parameters) = ipa.screenIPAClusters(ipa_character, preceding_sounds, following_sounds)
+	(handled, parameters) = ipa.screenIPAClusters(ipa_character, preceding_phonemes, following_phonemes)
 	if handled:
-		if parameters is None: #Second half of a cluster.
+		if parameters is None: #First half of a cluster.
 			return ()
 		regions = ipa.IPA_REGIONS[ipa_character]
-	elif not handled: #Look up the synthesis parameters.
+	else: #Look up the synthesis parameters.
 		(parameters, regions) = ipa.IPA_DATA[ipa_character]
 		
 	#Parameters need to be mutable.
@@ -114,20 +233,33 @@ def _phonemeToSound(phoneme, preceding_sounds, following_sounds, word_position, 
 	parameters_list = [parameters]
 	
 	#Apply universal rules to the parameters.
-	parameters_list = universal_rules.nasalizeVowel(ipa_character, following_sounds, parameters_list)
+	parameters_list = universal_rules.nasalizeVowel(ipa_character, following_phonemes, parameters_list)
 	
 	#Apply language-specific rules to the parameters.
-	parameters_list = language_rules.applyRules(parameters_list, ipa_character, preceding_sounds, following_sounds, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation)
+	parameters_list = language_rules.applyRules(parameters_list, ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation)
 	
 	#Synthesize sound.
 	sounds = ()
 	for parameters in parameters_list:
 		if options.debug:
 			print parameters
-		sounds += synthesizer.synthesize(parameters, 160)
+		sounds += synthesizer.synthesize(parameters)
 	return sounds
 	
 def _extractSentence(tokens):
+	"""
+	Reads through the token stream to assemble the next sentence, applying
+	context evaluation to its elements along the way.
+	
+	@type tokens: list
+	@param tokens: A list of all tokens remaining in the input data.
+	
+	@rtype: tuple(2)
+	@return: A tuple containing every token that forms a word in the extracted
+	    sentence, plus flags that describe the sentence's nature, and a list of
+	    all remaining tokens that form successive sentences.
+	"""
+	#Cache commonly-referenced variables in the local scope for efficiency.
 	word_regexp = _WORD_REGEXP
 	word_quoted = _WORD_QUOTED
 	word_emphasized = _WORD_EMPHASIZED
@@ -138,16 +270,18 @@ def _extractSentence(tokens):
 	quotation = False
 	emphasis = False
 	while tokens:
-		token = tokens.pop(0)
-		match = word_regexp.match(token)
+		token = tokens.pop(0) #Get the first token remaining in the queue.
+		match = word_regexp.match(token) #Break the token into its component elements.
 		if not match:
 			raise ValueError("Invalid token in IPA input: %s" % (token))
 			
+		#Set word-level markup flags.
 		if '"' in match.group(1):
 			quotation = True
 		if '*' in match.group(1):
 			emphasis = True
 			
+		#Describe and record the word in the sentence's token-list.
 		word_markup = []
 		if quotation:
 			word_markup.append(word_quoted)
@@ -155,11 +289,13 @@ def _extractSentence(tokens):
 			word_markup.append(word_emphasized)
 		words.append((match.group(2), tuple(word_markup)))
 		
+		#Unset word-level markup flags.
 		if '"' in match.group(3):
 			quotation = False
 		if '*' in match.group(3):
 			emphasis = False
 			
+		#Look for the end of the sentence, and set sentence-level markup flags.
 		if '.' in match.group(3):
 			break
 		elif '?' in match.group(3):
@@ -172,6 +308,5 @@ def _extractSentence(tokens):
 				markup.append(_SENTENCE_QUESTION)
 			markup.append(_SENTENCE_EXCLAMATION)
 			break
-			
-	return ((words, tuple(markup)), tokens)
+	return ((tuple(words), tuple(markup)), tokens)
 	

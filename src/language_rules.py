@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Klatt CPSC 599 module: src.language_rules
+CPSC 599 module: src.language_rules
 
 Purpose
 =======
@@ -16,14 +16,68 @@ Legal
 """
 import ipa
 
-def applyRules(parameters_list, ipa_character, preceding_sounds, following_sounds, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation):
-	transformed_parameters = []
+def applyRules(parameters_list, ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation):
+	"""
+	Iterates through all parameters that make up the current phoneme, applying
+	all applicable language-specific rules, in a specific order, to each
+	parameter-set.
 	
-	for parameters in parameters_list:
-		"""
-		feed data to appropriate function, storing returned parameters elements in transformed_parameters
-		this happens using the EXACT SAME data for each parameters element in parameters_list
-		"""
-		transformed_parameters.append(parameters)
+	The input list of parameters is not altered by this function.
+	
+	@type parameters_list: list
+	@param parameters_list: A collection of all sounds currently associated with
+	    the phoneme being processed.
+	@type ipa_character: unicode
+	@param ipa_character: The character, representative of a phoneme, being
+	    processed.
+	@param preceding_phonemes: A collection of all phonemes, in order, that
+	    precede the current IPA character in the current word.
+	@type following_phonemes: sequence
+	@param following_phonemes: A collection of all phonemes, in order, that
+	    follow the current IPA character in the current word.
+	@type word_position: int
+	@param word_position: The current word's position in its sentence, indexed
+	    from 1.
+	@type remaining_words: int
+	@param remaining_words: The number of words remaining before the end of the
+	    sentence is reached, not including the current word.
+	@type sentence_position: int
+	@param sentence_position: The current sentence's position in its paragraph,
+	    indexed from 1.
+	@type remaining_sentences: int
+	@param remaining_sentences: The number of sentences remaining before the end
+	    of the paragraph is reached, not including the current sentence.
+	@type is_quoted: bool
+	@param is_quoted: True if the current word is part of a quoted body.
+	@type is_emphasized: bool
+	@param is_quoted: True if the current word is part of an emphasized body.
+	@type is_question: bool
+	@param is_question: True if the current sentence ends with a question mark.
+	@type is_exclamation: bool
+	@param is_exclamation: True if the current sentence ends with an exclamation
+	    mark.
+	
+	@rtype: list
+	@return: An updated list of parameters, consisting of transformations of
+	    the base sounds, plus anything added to the stream.
+	"""
+	transformed_parameters = []
+	for parameters in parameters_list: #Transforms each parameter-set in the input-list, in order.
+		transformed_parameters += _doNothing(parameters)
 	return transformed_parameters
+	
+def _doNothing(parameters):
+	"""
+	A dummy function that demonstrates how this module works. This will be
+	removed once actual rules are defined.
+	
+	@type parameters: sequence(33)
+	@param parameters: A collection of parameter values to process.
+	
+	@rtype: list
+	@return: A list of all parameters, post-transformation.
+	
+	@author: Neil Tallim
+	"""
+	return [parameters]
 	
