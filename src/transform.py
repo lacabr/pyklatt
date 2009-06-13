@@ -168,8 +168,8 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 	sounds = ()
 	for (i, phoneme) in enumerate(phonemes):
 		sounds += _phonemeToSound(phoneme, [p for (p, d) in phonemes[:i]], [p for (p, d) in phonemes[i + 1:]], position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, options, synthesizer)
-		if terminal_pause: #Add a tenth of a second of silence.
-			sounds += synthesizer.generateSilence(100)
+	if terminal_pause: #Add a tenth of a second of silence.
+		sounds += synthesizer.generateSilence(100)
 	return sounds
 	
 def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, options, synthesizer):
