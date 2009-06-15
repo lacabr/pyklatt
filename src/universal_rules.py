@@ -107,7 +107,7 @@ def shapeContours(ipa_character, preceding_phonemes, following_phonemes, paramet
 		lead_in_values = lead_in_sound[:32]
 		
 		#Reduce initial sound duration by 10ms.
-		parameters_list[0] = lead_in_values + [max(0, lead_in_sound[32] - 10)]
+		parameters_list[0] = lead_in_values + [max(5, lead_in_sound[32] - 10)]
 		
 		#Place the new sound at the start of the list.
 		if not preceding_phonemes[-1] in ipa.STOPS: #Blend the sounds, 2/3 current.
@@ -116,11 +116,11 @@ def shapeContours(ipa_character, preceding_phonemes, following_phonemes, paramet
 			parameters_list.insert(0, list(ipa.IPA_PARAMETERS[u'\u0294'][:32]) + [10])
 			
 	if following_phonemes:
-		lead_out_sound = parameters_list[0]
+		lead_out_sound = parameters_list[-1]
 		lead_out_values = lead_out_sound[:32]
 		
 		#Reduce terminal sound duration by 10ms.
-		parameters_list[0] = lead_out_values + [max(0, lead_out_sound[32] - 10)]
+		parameters_list[-1] = lead_out_values + [max(5, lead_out_sound[32] - 10)]
 		
 		#Place the new sound at the end of the list.
 		if not ipa_character in ipa.STOPS: #Blend the sounds, 2/3 current.
