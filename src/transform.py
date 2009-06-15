@@ -49,7 +49,7 @@ def paragraphToSound(paragraph, options, synthesizer):
 	    speech.
 	"""
 	if options.verbose:
-			print "Processing '%s'..." % (paragraph)
+			print u"Processing '%s'..." % (paragraph)
 			
 	tokens = paragraph.split()
 	
@@ -163,7 +163,7 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 	phonemes.append((subject, multiplier))
 	
 	if options.verbose:
-		print "\tSynthesizing '%s'..." % (''.join([phoneme for (phoneme, multiplier) in phonemes]))
+		print u"\tSynthesizing '%s'..." % (''.join([phoneme for (phoneme, multiplier) in phonemes]))
 		
 	sounds = ()
 	for (i, phoneme) in enumerate(phonemes):
@@ -273,7 +273,7 @@ def _extractSentence(tokens):
 		token = tokens.pop(0) #Get the first token remaining in the queue.
 		match = word_regexp.match(token) #Break the token into its component elements.
 		if not match:
-			raise ValueError("Invalid token in IPA input: %s" % (token))
+			raise ValueError(u"Invalid token in IPA input: %s" % (token))
 			
 		#Set word-level markup flags.
 		if '"' in match.group(1):
