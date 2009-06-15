@@ -126,7 +126,7 @@ def shapeContours(ipa_character, preceding_phonemes, following_phonemes, paramet
 		if not ipa_character in ipa.STOPS: #Blend the sounds, 2/3 current.
 			parameters_list.append([(c * 2 + p) / 3 for (c, p) in zip(lead_out_values, ipa.IPA_PARAMETERS[following_phonemes[0]][:32])] + [10])
 		else: #Add a 'h' gap.
-			parameters_list.insert(0, list(ipa.IPA_PARAMETERS[u'h'][:32]) + [10])
+			parameters_list.append(list(ipa.IPA_PARAMETERS[u'h'][:32]) + [10])
 			
 	return parameters_list
 	
