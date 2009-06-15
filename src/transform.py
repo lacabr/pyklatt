@@ -236,11 +236,11 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	#Apply vowel nasalization.
 	parameters_list = universal_rules.nasalizeVowel(ipa_character, following_phonemes, parameters_list)
 	
-	#Apply language-specific rules to the parameters.
-	parameters_list = language_rules.applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, parameters_list)
-	
 	#Apply contour-shaping.
 	parameters_list = universal_rules.shapeContours(ipa_character, preceding_phonemes, following_phonemes, parameters_list)
+	
+	#Apply language-specific rules to the parameters.
+	parameters_list = language_rules.applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, parameters_list)
 	
 	#Synthesize sound.
 	sounds = ()
