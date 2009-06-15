@@ -51,13 +51,13 @@ def nasalizeVowel(ipa_character, following_phonemes, parameters_list):
 	
 	@author: Neil Tallim
 	"""
+	parameters_list = parameters_list[:] #Make a local copy.
+	
 	if not following_phonemes or not following_phonemes[0] in ipa.NASALS:
 		return parameters_list
 	if not ipa_character in ipa.VOWELS or ipa_character in ipa.NASALS:
 		return parameters_list
 		
-	parameters_list = parameters_list[:] #Make a local copy.
-	
 	#Extract vowel parameters.
 	vowel = parameters_list[0]
 	vowel_duration = vowel[32]
@@ -73,5 +73,60 @@ def nasalizeVowel(ipa_character, following_phonemes, parameters_list):
 	#Add nasalized terminator = 2/3 nasalized sound, 1/3 base vowel.
 	parameters_list.insert(2, [(v + n * 2) / 3 for (v, n) in values] + [int(vowel_duration * 0.333)])
 	
+	return parameters_list
+	
+def shapeContours(ipa_character, preceding_phonemes, following_phonemes, parameters_list):
+	"""
+	Lops off 10ms from the start and end of the current phoneme and blends it
+	with the sounds on its edges. 
+	
+	The input list of parameters is not altered by this function.
+	
+	@type ipa_character: unicode
+	@param ipa_character: The character, representative of a phoneme, being
+	    processed.
+	@type preceding_phonemes: sequence
+	@param preceding_phonemes: A collection of all phonemes, in order, that
+	    precede the current IPA character in the current word.
+	@type following_phonemes: sequence
+	@param following_phonemes: A collection of all phonemes, in order, that
+	    follow the current IPA character in the current word.
+	@type parameters_list: list
+	@param parameters_list: A collection of all sounds currently associated with
+	    the IPA character being processed.
+	
+	@rtype: list
+	@return: An updated list of parameters.
+	
+	@author: Neil Tallim
+	"""
+	parameters_list = parameters_list[:] #Make a local copy.
+	
+	if preceding_phonemes:
+		lead_in_sound = parameters_list[0]
+		lead_in_values = lead_in_sound[:32]
+		
+		#Reduce initial sound duration by 10ms.
+		parameters_list[0] = lead_in_values + [max(0, lead_in_sound[32] - 10)]
+		
+		#Place the new sound at the start of the list.
+		if not preceding_phonemes[-1] in ipa.STOPS: #Blend the sounds, 2/3 current.
+			parameters_list.insert(0, [(c * 2 + p) / 3 for (c, p) in zip(lead_in_values, ipa.IPA_PARAMETERS[preceding_phonemes[-1]][:32])] + [10])
+		else: #Add a 'ʔ' gap.
+			parameters_list.insert(0, list(ipa.IPA_PARAMETERS[u'\u0294'][:32]) + [10])
+			
+	if following_phonemes:
+		lead_out_sound = parameters_list[0]
+		lead_out_values = lead_out_sound[:32]
+		
+		#Reduce terminal sound duration by 10ms.
+		parameters_list[0] = lead_out_values + [max(0, lead_out_sound[32] - 10)]
+		
+		#Place the new sound at the end of the list.
+		if not ipa_character in ipa.STOPS: #Blend the sounds, 2/3 current.
+			parameters_list.append([(c * 2 + p) / 3 for (c, p) in zip(lead_out_values, ipa.IPA_PARAMETERS[following_phonemes[0]][:32])] + [10])
+		else: #Add a 'h' gap.
+			parameters_list.insert(0, list(ipa.IPA_PARAMETERS[u'h'][:32]) + [10])
+			
 	return parameters_list
 	

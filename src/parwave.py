@@ -19,7 +19,10 @@ Legal
 """
 import math
 import random
-			
+
+FREQUENCY = 10 #: A number that indicates the frequency of synthesized speech, as a multiple of 1000Hz.
+_ANTI_POP_CYCLES = 15 #: The number of cycles to clip from the front of a sound to avoid popping.
+
 class Synthesizer(object):
 	"""
 	Enables synthesis of sounds based on parameter values, as described in the
@@ -39,7 +42,7 @@ class Synthesizer(object):
 		@return: A collection of 0s, equal in length to milliseconds * 10.
 		"""
 		self._noise = 0.0
-		return (0,) * (milliseconds * 10)
+		return (0,) * int(milliseconds * FREQUENCY)
 		
 	def synthesize(self, parameters, f0=160):
 		"""
@@ -60,6 +63,8 @@ class Synthesizer(object):
 		@return: A collection of integers between -32768 and 32767 that represent
 		    synthetic speech.
 		"""
+		anti_pop_cycles = _ANTI_POP_CYCLES #Cache value locally for speed.
+		
 		#Initialize parameters required for synthesis.
 		half_f0 = f0 / 2.0
 		(fgp, fgz, fgs, fnp, fnz,
@@ -83,7 +88,7 @@ class Synthesizer(object):
 		sounds = []
 		last_result = 0
 		period_index = f0
-		for t in xrange(milliseconds * 10): #Run for the specified number of milliseconds, with a frequency of 10,000 Hz.
+		for t in xrange(int(milliseconds * FREQUENCY) + anti_pop_cycles): #Run for the specified number of milliseconds, plus cycles for the anti-pop algorithm.
 			noise = self._getNoise()
 			
 			#Apply linear f0 approximation.
@@ -111,7 +116,7 @@ class Synthesizer(object):
 			
 			output = result - last_result #Subtract last result from new result to introduce a micro-period into the waveform so it's audible to humans.
 			last_result = result
-			if t > 15: #Skip the first 15 values (1.5ms) to avoid popping.
+			if t >= anti_pop_cycles: #Skip the first several values to avoid popping.
 				output = int(output * 32767.0) #Convert the result to an integer on an appropriate scale.
 				if output > 16383: #Constrain the output range, by clipping if necessary.
 					output = 16383

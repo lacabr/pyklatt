@@ -20,8 +20,8 @@ import language_rules
 import parwave
 import universal_rules
 
-#'mnŋpbtdɾkgfvθðszʃʒhɹjwlieɛæaIəʊuoʌɔ'
-_IPA_CHARACTERS = u'mn\u014bpbtd\u027ekgfv\u03b8\xf0sz\u0283\u0292h\u0279jwlie\u025b\xe6aI\u0259\u028auo\u028c\u0254' #: A list of all characters the regular expression will have to deal with; not unlike an IPA [A-Z].
+#'mnŋpbtdɾkgfvθðszʃʒhʔɹjwlieɛæaIəʊuoʌɔ'
+_IPA_CHARACTERS = u'mn\u014bpbtd\u027ekgfv\u03b8\xf0sz\u0283\u0292h\u0294\u0279jwlie\u025b\xe6aI\u0259\u028auo\u028c\u0254' #: A list of all characters the regular expression will have to deal with; not unlike an IPA [A-Z].
 _WORD_REGEXP = re.compile('([*"]*)([%s][%s<>]*[:,]?)([*".!?]*)' % (_IPA_CHARACTERS, _IPA_CHARACTERS)) #: The regular expression that matches tokens in the input file.
 
 #Sentence markup enumeration.
@@ -180,6 +180,7 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	@type phoneme: tuple(2)
 	@param word: The IPA character being processed, plus the phoneme's
 	    duration multiplier.
+	@type preceding_phonemes: sequence
 	@param preceding_phonemes: A collection of all phonemes, in order, that
 	    precede the current IPA character in the current word.
 	@type following_phonemes: sequence
@@ -232,11 +233,14 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	#Universal rules may append additional steps, so there needs to be a list of parameters.
 	parameters_list = [parameters]
 	
-	#Apply universal rules to the parameters.
+	#Apply vowel nasalization.
 	parameters_list = universal_rules.nasalizeVowel(ipa_character, following_phonemes, parameters_list)
 	
 	#Apply language-specific rules to the parameters.
-	parameters_list = language_rules.applyRules(parameters_list, ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation)
+	parameters_list = language_rules.applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, parameters_list)
+	
+	#Apply contour-shaping.
+	parameters_list = universal_rules.shapeContours(ipa_character, preceding_phonemes, following_phonemes, parameters_list)
 	
 	#Synthesize sound.
 	sounds = ()

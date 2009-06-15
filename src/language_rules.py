@@ -16,7 +16,7 @@ Legal
 """
 import ipa
 
-def applyRules(parameters_list, ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation):
+def applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, parameters_list):
 	"""
 	Iterates through all parameters that make up the current phoneme, applying
 	all applicable language-specific rules, in a specific order, to each
@@ -24,12 +24,10 @@ def applyRules(parameters_list, ipa_character, preceding_phonemes, following_pho
 	
 	The input list of parameters is not altered by this function.
 	
-	@type parameters_list: list
-	@param parameters_list: A collection of all sounds currently associated with
-	    the phoneme being processed.
 	@type ipa_character: unicode
 	@param ipa_character: The character, representative of a phoneme, being
 	    processed.
+	@type preceding_phonemes: sequence
 	@param preceding_phonemes: A collection of all phonemes, in order, that
 	    precede the current IPA character in the current word.
 	@type following_phonemes: sequence
@@ -56,6 +54,9 @@ def applyRules(parameters_list, ipa_character, preceding_phonemes, following_pho
 	@type is_exclamation: bool
 	@param is_exclamation: True if the current sentence ends with an exclamation
 	    mark.
+	@type parameters_list: list
+	@param parameters_list: A collection of all sounds currently associated with
+	    the phoneme being processed.
 	
 	@rtype: list
 	@return: An updated list of parameters, consisting of transformations of
