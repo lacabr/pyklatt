@@ -17,9 +17,9 @@ import ipa
 
 def nasalizeVowel(ipa_character, following_phonemes, parameters_list):
 	"""
-	Lops off 0.05s from the end of the current sound, if it's a vowel followed by
-	a nasal, and inserts 0.05s of two nasalized variants of the vowel's
-	parameters.
+	Lops off half of the current sound, if it's a vowel followed by a nasal, and
+	inserts one sixth and one third of its duration as two nasalized variants of
+	the vowel's parameters.
 	
 	The input list of parameters is not altered by this function.
 	
@@ -58,45 +58,20 @@ def nasalizeVowel(ipa_character, following_phonemes, parameters_list):
 		
 	parameters_list = parameters_list[:] #Make a local copy.
 	
-	#Unpack the base parameters.
-	(fgp, fgz, fgs, fnp, fnz,
-	 f1, f2, f3, f4, f5, f6,
-	 bgp, bgz, bgs, bnp, bnz,
-	 bw1, bw2, bw3, bw4, bw5, bw6,
-	 a2, a3, a4, a5, a6,
-	 ab, ah, af, av, avs,
-	 duration) = parameters_list[0]
+	#Extract vowel parameters.
+	vowel = parameters_list[0]
+	vowel_duration = vowel[32]
+	vowel_values = vowel[:32]
 	
-	#Reduce duration by 50ms.
-	parameters_list[0] = [
-	 fgp, fgz, fgs, fnp, fnz,
-	 f1, f2, f3, f4, f5, f6,
-	 bgp, bgz, bgs, bnp, bnz,
-	 bw1, bw2, bw3, bw4, bw5, bw6,
-	 a2, a3, a4, a5, a6,
-	 ab, ah, af, av, avs,
-	 max(50, duration - 50)]
-	 
-	#Add nasalized terminator.
-	parameters_list.insert(1, [
-	 fgp, fgz, fgs, 270, 450,
-	 f1 + 100, f2 + 100, f3 + 100, f4, f5, f6,
-	 bgp, bgz, bgs, bnp, bnz,
-	 min(40, bw1 - 10), bw2 * 1.25, max(300, bw3 * 1.5), bw4, bw5, bw6,
-	 a2, a3, a4, a5, a6,
-	 ab, ah, af, 50, 30,
-	 25]
-	)
-	#Add half-nasalized step.
-	parameters_list.insert(1, [
-	 fgp, fgz, fgs, 250, 400,
-	 f1 + 50, f2 + 50, f3 + 50, f4, f5, f6,
-	 bgp, bgz, bgs, bnp, bnz,
-	 min(40, bw1 - 10), bw2 * 1.125, max(300, bw3 * 1.25), bw4, bw5, bw6,
-	 a2, a3, a4, a5, a6,
-	 ab, ah, af, 50, 30,
-	 25]
-	)
+	#Multiplex the nasal and vowel values.
+	values = zip(vowel_values, ipa.IPA_PARAMETERS[following_phonemes[0]][:32])
+	
+	#Reduce vowel duration by 50%.
+	parameters_list[0] = vowel_values + [int(vowel_duration * 0.5)]
+	#Add nazalized lead-in = 1/3 nasalized sound, 2/3 base vowel.
+	parameters_list.insert(1, [(v * 2 + n) / 3 for (v, n) in values] + [int(vowel_duration * 0.167)])
+	#Add nasalized terminator = 2/3 nasalized sound, 1/3 base vowel.
+	parameters_list.insert(2, [(v + n * 2) / 3 for (v, n) in values] + [int(vowel_duration * 0.333)])
 	
 	return parameters_list
 	
