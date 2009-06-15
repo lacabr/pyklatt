@@ -53,7 +53,7 @@ def nasalizeVowel(ipa_character, following_phonemes, parameters_list):
 	"""
 	if not following_phonemes or not following_phonemes[0] in ipa.NASALS:
 		return parameters_list
-	if not ipa_character in ipa.VOWELS:
+	if not ipa_character in ipa.VOWELS or ipa_character in ipa.NASALS:
 		return parameters_list
 		
 	parameters_list = parameters_list[:] #Make a local copy.
