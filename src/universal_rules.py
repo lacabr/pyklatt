@@ -117,7 +117,7 @@ def shapeContours(ipa_character, preceding_phonemes, following_phonemes, paramet
 		else: #Add a 'ʔ' gap.
 			parameters_list.insert(0, list(ipa.IPA_PARAMETERS[u'\u0294'][:32]) + [10])
 			
-	if following_phonemes:
+	if following_phonemes and not (ipa_character in ipa.VOWELS and following_phonemes[0] in ipa.NASALS): #Avoid nasalizing previously nasalized vowels.
 		lead_out_sound = parameters_list[-1]
 		lead_out_values = lead_out_sound[:32]
 		
