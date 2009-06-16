@@ -22,7 +22,7 @@ import universal_rules
 
 #'mnŋpbtdɾkgfvθðszʃʒhʔɹjwlieɛæaIəʊuoʌɔ'
 _IPA_CHARACTERS = u'mn\u014bpbtd\u027ekgfv\u03b8\xf0sz\u0283\u0292h\u0294\u0279jwlie\u025b\xe6aI\u0259\u028auo\u028c\u0254' #: A list of all characters the regular expression will have to deal with; not unlike an IPA [A-Z].
-_WORD_REGEXP = re.compile('([*"]*)([%s][%s<>]*[:,]?)([*".!?]*)' % (_IPA_CHARACTERS, _IPA_CHARACTERS)) #: The regular expression that matches tokens in the input file.
+_WORD_REGEXP = re.compile('((?:[*]|"|[*]"|"[*])?\'?)([%s][%s<>]*[:,]?)((?:[*]|"|[*]"|"[*])?(?:[.]|[?]|!|[?]!|![?])?)' % (_IPA_CHARACTERS, _IPA_CHARACTERS)) #: The regular expression that matches tokens in the input file.
 
 #Sentence markup enumeration.
 _SENTENCE_QUESTION = 1 #: Identifies a sentence as a question.
@@ -31,6 +31,7 @@ _SENTENCE_EXCLAMATION = 2 #: Identifies a sentence as an exclamation.
 #Word markup enumeration.
 _WORD_QUOTED = 1 #: Identifies a word as being quoted.
 _WORD_EMPHASIZED = 2 #: Identifies a word as being emphasized.
+_WORD_CONTENT = 3 #: Identifies a word as a key content item in a phrase.
 
 def paragraphToSound(paragraph, options, synthesizer):
 	"""
@@ -146,6 +147,7 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 	#Set markup flags.
 	is_quoted = _WORD_QUOTED in markup
 	is_emphasized = _WORD_EMPHASIZED in markup
+	is_content = _WORD_CONTENT in markup
 	
 	ipa_tokens = ipa.reduceIPAClusters(token)
 	phonemes = []
@@ -168,12 +170,12 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 		
 	sounds = ()
 	for (i, phoneme) in enumerate(phonemes):
-		sounds += _phonemeToSound(phoneme, [p for (p, d) in phonemes[:i]], [p for (p, d) in phonemes[i + 1:]], position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, options, synthesizer)
+		sounds += _phonemeToSound(phoneme, [p for (p, d) in phonemes[:i]], [p for (p, d) in phonemes[i + 1:]], position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer)
 	if terminal_pause: #Add a tenth of a second of silence.
 		sounds += synthesizer.generateSilence(100)
 	return sounds
 	
-def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, options, synthesizer):
+def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer):
 	"""
 	Transforms a phoneme into a collections of integers, representing
 	synthesized speech.
@@ -202,7 +204,9 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	@type is_quoted: bool
 	@param is_quoted: True if the current word is part of a quoted body.
 	@type is_emphasized: bool
-	@param is_quoted: True if the current word is part of an emphasized body.
+	@param is_emphasized: True if the current word is part of an emphasized body.
+	@type is_content: bool
+	@param is_content: True if the current word was marked as a content word.
 	@type is_question: bool
 	@param is_question: True if the current sentence ends with a question mark.
 	@type is_exclamation: bool
@@ -234,7 +238,7 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	parameters_list = universal_rules.shapeContours(ipa_character, preceding_phonemes, following_phonemes, parameters_list)
 	
 	#Apply language-specific rules to the parameters.
-	parameters_list = language_rules.applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, parameters_list)
+	parameters_list = language_rules.applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters_list)
 	
 	#Synthesize sound.
 	sounds = ()
@@ -261,6 +265,7 @@ def _extractSentence(tokens):
 	word_regexp = _WORD_REGEXP
 	word_quoted = _WORD_QUOTED
 	word_emphasized = _WORD_EMPHASIZED
+	word_content = _WORD_CONTENT
 	
 	words = []
 	markup = []
@@ -285,6 +290,8 @@ def _extractSentence(tokens):
 			word_markup.append(word_quoted)
 		if emphasis:
 			word_markup.append(word_emphasized)
+		if "'" in match.group(1):
+			word_markup.append(word_content)
 		words.append((match.group(2), tuple(word_markup)))
 		
 		#Unset word-level markup flags.

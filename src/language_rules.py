@@ -16,7 +16,7 @@ Legal
 """
 import ipa
 
-def applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_question, is_exclamation, parameters_list):
+def applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters_list):
 	"""
 	Iterates through all parameters that make up the current phoneme, applying
 	all applicable language-specific rules, in a specific order, to each
@@ -48,7 +48,9 @@ def applyRules(ipa_character, preceding_phonemes, following_phonemes, word_posit
 	@type is_quoted: bool
 	@param is_quoted: True if the current word is part of a quoted body.
 	@type is_emphasized: bool
-	@param is_quoted: True if the current word is part of an emphasized body.
+	@param is_emphasized: True if the current word is part of an emphasized body.
+	@type is_content: bool
+	@param is_content: True if the current word was marked as a content word.
 	@type is_question: bool
 	@param is_question: True if the current sentence ends with a question mark.
 	@type is_exclamation: bool
