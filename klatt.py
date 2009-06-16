@@ -36,7 +36,12 @@ def main(input_file, options):
 	@param options: The options with which synthesis should occur.
 	"""
 	synthesizer = parwave.Synthesizer() #The synthesizer that will render speech.
-  	wave_form = waveform.WaveForm(options.output) #The wavefile interface to which data will be dumped.
+	wave_form = None
+	try:
+  		wave_form = waveform.WaveForm(options.output) #The wavefile interface to which data will be dumped.
+  	except IOError:
+  		print "Unable to open '%s' for recording. Please close any applications that might be using it and try again." % (options.output)
+  		sys.exit(1)
   	chomp_regexp = re.compile("\r?\n$") #A regular expression that cuts newlines off the ends of strings.
   	silent_half_second = synthesizer.generateSilence(500) #Half of a second of silence.
 	for paragraph in open(input_file):
