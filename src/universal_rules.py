@@ -78,7 +78,9 @@ def nasalizeVowel(ipa_character, following_phonemes, parameters_list):
 def shapeContours(ipa_character, preceding_phonemes, following_phonemes, parameters_list):
 	"""
 	Lops off 10ms from the start and end of the current phoneme and blends it
-	with the sounds on its edges. 
+	with the sounds on its edges.
+	
+	A glottal pause (hʔ) is inserted before stops instead of blending the sounds.
 	
 	The input list of parameters is not altered by this function.
 	
@@ -110,7 +112,7 @@ def shapeContours(ipa_character, preceding_phonemes, following_phonemes, paramet
 		parameters_list[0] = lead_in_values + [max(5, lead_in_sound[32] - 10)]
 		
 		#Place the new sound at the start of the list.
-		if not preceding_phonemes[-1] in ipa.STOPS: #Blend the sounds, 2/3 current.
+		if not ipa_character in ipa.STOPS: #Blend the sounds, 2/3 current.
 			parameters_list.insert(0, [(c * 2 + p) / 3 for (c, p) in zip(lead_in_values, ipa.IPA_PARAMETERS[preceding_phonemes[-1]][:32])] + [10])
 		else: #Add a 'ʔ' gap.
 			parameters_list.insert(0, list(ipa.IPA_PARAMETERS[u'\u0294'][:32]) + [10])
@@ -123,7 +125,7 @@ def shapeContours(ipa_character, preceding_phonemes, following_phonemes, paramet
 		parameters_list[-1] = lead_out_values + [max(5, lead_out_sound[32] - 10)]
 		
 		#Place the new sound at the end of the list.
-		if not ipa_character in ipa.STOPS: #Blend the sounds, 2/3 current.
+		if not following_phonemes[0] in ipa.STOPS: #Blend the sounds, 2/3 current.
 			parameters_list.append([(c * 2 + p) / 3 for (c, p) in zip(lead_out_values, ipa.IPA_PARAMETERS[following_phonemes[0]][:32])] + [10])
 		else: #Add a 'h' gap.
 			parameters_list.append(list(ipa.IPA_PARAMETERS[u'h'][:32]) + [10])
