@@ -147,14 +147,15 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 	is_quoted = _WORD_QUOTED in markup
 	is_emphasized = _WORD_EMPHASIZED in markup
 	
+	ipa_tokens = ipa.reduceIPAClusters(token)
 	phonemes = []
-	subject = token[0]
+	subject = ipa_tokens[0]
 	multiplier = 1.0
-	#For each character in the token, collapse extension syntax into the multiplier associated with the last-seen character.
-	for i in token[1:]:
-		if i == '>':
+	#For each character in the token, post-IPA-reduction, collapse extension syntax into the multiplier associated with the last-seen character.
+	for i in ipa_tokens[1:]:
+		if i == u'>':
 			multiplier *= 1.5
-		elif i == '<':
+		elif i == u'<':
 			multiplier *= 0.5
 		else:
 			phonemes.append((subject, multiplier))
@@ -163,7 +164,7 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 	phonemes.append((subject, multiplier))
 	
 	if options.verbose:
-		print u"\tSynthesizing '%s'..." % (''.join([phoneme for (phoneme, multiplier) in phonemes]))
+		print u"\tSynthesizing '%s'..." % (u''.join([phoneme for (phoneme, multiplier) in phonemes]))
 		
 	sounds = ()
 	for (i, phoneme) in enumerate(phonemes):
@@ -218,15 +219,8 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	(ipa_character, duration_multiplier) = phoneme
 	
 	#Retrieve synthesis parameters.
-	regions = None
-	(handled, parameters) = ipa.screenIPAClusters(ipa_character, preceding_phonemes, following_phonemes)
-	if handled:
-		if parameters is None: #First half of a cluster.
-			return ()
-		regions = ipa.IPA_REGIONS[ipa_character]
-	else: #Look up the synthesis parameters.
-		(parameters, regions) = ipa.IPA_DATA[ipa_character]
-		
+	(parameters, regions) = ipa.IPA_DATA[ipa_character]
+	
 	#Parameters need to be mutable.
 	parameters = list(parameters)
 	parameters[-1] = int(parameters[-1] * duration_multiplier) #Adjust the duration based on markup.

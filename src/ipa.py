@@ -973,86 +973,139 @@ _IPA_MAPPING = {
   'voice': True,
   'stop': False,
   'regions': [BACK]
- }
+ },
+###############################################################################
+ u'd\u0292': { #dʒ
+  'freq-glottal-pole': 0,
+  'freq-glottal-zero': 1500,
+  'freq-glottal-sine': 0,
+  'freq-nasal-pole': 250,
+  'freq-nasal-zero': 250,
+  'freq (1-6)': (260, 1800, 2820, 3300, 3750, 4900),
+  'bwidth-glottal-pole': 100,
+  'bwidth-glottal-zero': 6000,
+  'bwidth-glottal-sine': 100,
+  'bwidth-nasal-pole': 100,
+  'bwidth-nasal-zero': 100,
+  'bwidth (1-6)': (60, 80, 270, 250, 200, 1000),
+  'formant-gain (2-6)': (0, 22, 30, 26, 26),
+  'formant-bypass-gain': 0,
+  'formant-cascade-gain': 0,
+  'formant-parallel-gain': 0,
+  'voicing-linear-gain': 37,
+  'voicing-sine-gain': 37,
+  'nominal-duration': 100,
+  'vowel': False,
+  'nasal': False,
+  'voice': True,
+  'stop': False,
+  'regions': [CORONAL]
+ },
+ u't\u00283': { #tʃ
+  'freq-glottal-pole': 0,
+  'freq-glottal-zero': 1500,
+  'freq-glottal-sine': 0,
+  'freq-nasal-pole': 250,
+  'freq-nasal-zero': 250,
+  'freq (1-6)': (350, 1800, 2820, 3300, 3750, 4900),
+  'bwidth-glottal-pole': 100,
+  'bwidth-glottal-zero': 6000,
+  'bwidth-glottal-sine': 100,
+  'bwidth-nasal-pole': 100,
+  'bwidth-nasal-zero': 100,
+  'bwidth (1-6)': (200, 90, 300, 250, 200, 1000),
+  'formant-gain (2-6)': (0, 22, 30, 26, 26),
+  'formant-bypass-gain': 0,
+  'formant-cascade-gain': 0,
+  'formant-parallel-gain': 10,
+  'voicing-linear-gain': 0,
+  'voicing-sine-gain': 0,
+  'nominal-duration': 100,
+  'vowel': False,
+  'nasal': False,
+  'voice': False,
+  'stop': False,
+  'regions': [CORONAL]
+ },
+ u'aj': {
+  'freq-glottal-pole': 0,
+  'freq-glottal-zero': 1500,
+  'freq-glottal-sine': 0,
+  'freq-nasal-pole': 250,
+  'freq-nasal-zero': 250,
+  'freq (1-6)': (660, 1200, 2550, 3300, 3750, 4900),
+  'bwidth-glottal-pole': 100,
+  'bwidth-glottal-zero': 6000,
+  'bwidth-glottal-sine': 100,
+  'bwidth-nasal-pole': 100,
+  'bwidth-nasal-zero': 100,
+  'bwidth (1-6)': (100, 70, 200, 250, 200, 1000),
+  'formant-gain (2-6)': (0, 0, 0, 0, 0),
+  'formant-bypass-gain': 0,
+  'formant-cascade-gain': 0,
+  'formant-parallel-gain': 0,
+  'voicing-linear-gain': 60,
+  'voicing-sine-gain': 0,
+  'nominal-duration': 150,
+  'vowel': True,
+  'nasal': False,
+  'voice': True,
+  'stop': False,
+  'regions': [NEAR_FRONT, DORSAL]
+ },
+ u'aw': {
+  'freq-glottal-pole': 0,
+  'freq-glottal-zero': 1500,
+  'freq-glottal-sine': 0,
+  'freq-nasal-pole': 250,
+  'freq-nasal-zero': 250,
+  'freq (1-6)': (640, 1230, 2550, 3300, 3750, 4900),
+  'bwidth-glottal-pole': 100,
+  'bwidth-glottal-zero': 6000,
+  'bwidth-glottal-sine': 100,
+  'bwidth-nasal-pole': 100,
+  'bwidth-nasal-zero': 100,
+  'bwidth (1-6)': (80, 70, 140, 250, 200, 1000),
+  'formant-gain (2-6)': (0, 0, 0, 0, 0),
+  'formant-bypass-gain': 0,
+  'formant-cascade-gain': 0,
+  'formant-parallel-gain': 0,
+  'voicing-linear-gain': 60,
+  'voicing-sine-gain': 0,
+  'nominal-duration': 150,
+  'vowel': True,
+  'nasal': False,
+  'voice': True,
+  'stop': False,
+  'regions': [NEAR_FRONT, LABIAL, DORSAL]
+ },
+ u'\u0254j': { #ɔj
+  'freq-glottal-pole': 0,
+  'freq-glottal-zero': 1500,
+  'freq-glottal-sine': 0,
+  'freq-nasal-pole': 250,
+  'freq-nasal-zero': 250,
+  'freq (1-6)': (550, 960, 2400, 3300, 3750, 4900),
+  'bwidth-glottal-pole': 100,
+  'bwidth-glottal-zero': 6000,
+  'bwidth-glottal-sine': 100,
+  'bwidth-nasal-pole': 100,
+  'bwidth-nasal-zero': 100,
+  'bwidth (1-6)': (80, 50, 130, 250, 200, 1000),
+  'formant-gain (2-6)': (0, 0, 0, 0, 0),
+  'formant-bypass-gain': 0,
+  'formant-cascade-gain': 0,
+  'formant-parallel-gain': 0,
+  'voicing-linear-gain': 60,
+  'voicing-sine-gain': 0,
+  'nominal-duration': 150,
+  'vowel': True,
+  'nasal': False,
+  'voice': True,
+  'stop': False,
+  'regions': [BACK, DORSAL]
+ },
 } #: A neatly organized dictionary to make it easier for linguists to alter parameters.
-
-_IPA_CLUSTERS = (
- (('d', '\u0292'), ( #dʒ
-  0, 1500, 0, #Glottal frequencies.
-  250, 250, #Nasal frequencies.
-  260, 1800, 2820, 3300, 3750, 4900, #Formant frequencies.
-  100, 6000, 100, #Glottal bandwidths.
-  100, 100, #Nasal bandwidths.
-  60, 80, 270, 250, 200, 1000, #Formant bandwidths.
-  0, 22, 30, 26, 26, #Formant gains.
-  0, #Formant bypass gain.
-  0, #Formant cascade gain.
-  10, #Formant parallel gain.
-  37, #Voicing linear gain.
-  37, #Voicing sinusoidal gain.
-  100 #Nominal duration.
- )), 
- (('t', '\u0283'), ( #tʃ
-  0, 1500, 0, #Glottal frequencies.
-  250, 250, #Nasal frequencies.
-  350, 1800, 2820, 3300, 3750, 4900, #Formant frequencies.
-  100, 6000, 100, #Glottal bandwidths.
-  100, 100, #Nasal bandwidths.
-  200, 90, 300, 250, 200, 1000, #Formant bandwidths.
-  0, 22, 30, 26, 26, #Formant gains.
-  0, #Formant bypass gain.
-  0, #Formant cascade gain.
-  10, #Formant parallel gain.
-  0, #Voicing linear gain.
-  0, #Voicing sinusoidal gain.
-  100 #Nominal duration.
- )),
- (('a', 'j'), (
-  0, 1500, 0, #Glottal frequencies.
-  250, 250, #Nasal frequencies.
-  660, 1200, 2550, 3300, 3750, 4900, #Formant frequencies.
-  100, 6000, 100, #Glottal bandwidths.
-  100, 100, #Nasal bandwidths.
-  100, 70, 200, 250, 200, 1000, #Formant bandwidths.
-  0, 0, 0, 0, 0, #Formant gains.
-  0, #Formant bypass gain.
-  0, #Formant cascade gain.
-  0, #Formant parallel gain.
-  60, #Voicing linear gain.
-  0, #Voicing sinusoidal gain.
-  150 #Nominal duration.
- )),
- (('a', 'w'), (
-  0, 1500, 0, #Glottal frequencies.
-  250, 250, #Nasal frequencies.
-  640, 1230, 2550, 3300, 3750, 4900, #Formant frequencies.
-  100, 6000, 100, #Glottal bandwidths.
-  100, 100, #Nasal bandwidths.
-  80, 70, 140, 250, 200, 1000, #Formant bandwidths.
-  0, 0, 0, 0, 0, #Formant gains.
-  0, #Formant bypass gain.
-  0, #Formant cascade gain.
-  0, #Formant parallel gain.
-  60, #Voicing linear gain.
-  0, #Voicing sinusoidal gain.
-  150 #Nominal duration.
- )),
- (('\u0254', 'j'), ( #ɔj
-  0, 1500, 0, #Glottal frequencies.
-  250, 250, #Nasal frequencies.
-  550, 960, 2400, 3300, 3750, 4900, #Formant frequencies.
-  100, 6000, 100, #Glottal bandwidths.
-  100, 100, #Nasal bandwidths.
-  80, 50, 130, 250, 200, 1000, #Formant bandwidths.
-  0, 0, 0, 0, 0, #Formant gains.
-  0, #Formant bypass gain.
-  0, #Formant cascade gain.
-  0, #Formant parallel gain.
-  60, #Voicing linear gain.
-  0, #Voicing sinusoidal gain.
-  150 #Nominal duration.
- ))
-) #: An arbitrary mapping of multi-character IPA symbols that need to be reduced during phoneme pre-processing.
 
 #Reduce IPA data to efficient structures.
 NASALS = tuple([ipa_character for (ipa_character, details) in _IPA_MAPPING.iteritems() if details['nasal']]) #: A list of all nasal phonemes.
@@ -1062,6 +1115,7 @@ VOWELS = tuple([ipa_character for (ipa_character, details) in _IPA_MAPPING.iteri
 IPA_PARAMETERS = {} #: A collection of synthesizing parameter tuples, keyed by corresponding IPA character.
 IPA_REGIONS = {} #: A collection of phoneme regions, keyed by corresponding IPA character.
 IPA_DATA = {} #: A collection of both parameters and regions, in a tuple, keyed by corresponding IPA character.
+_COMPLEX_CHARACTERS = {} #: A collection of multi-character IPA symboles, arranged in a tier.
 for (ipa_character, details) in _IPA_MAPPING.iteritems():
 	#Extract an ordered tuple of data from the dictionary.
 	parameters = (
@@ -1090,40 +1144,57 @@ for (ipa_character, details) in _IPA_MAPPING.iteritems():
 	IPA_PARAMETERS[ipa_character] = parameters
 	IPA_REGIONS[ipa_character] = regions
 	IPA_DATA[ipa_character] = (parameters, regions)
+	
+	if len(ipa_character) == 2: #It's a multi-character symbol.
+		tails = _COMPLEX_CHARACTERS.get(ipa_character[0])
+		if tails is None:
+			tails = _COMPLEX_CHARACTERS[ipa_character[0]] = {}
+		tails[ipa_character[1]] = ipa_character
 del _IPA_MAPPING
 
 
-def screenIPAClusters(ipa_character, preceding_phonemes, following_phonemes):
+def reduceIPAClusters(token):
 	"""
-	Determines whether the given IPA character is part of a multi-character
-	sequence, and returns appropriate parameters or dismisses the character
-	accordingly.
+	Returns the input word as a collection of IPA characters, condensing
+	multi-character symbols into a single string, and leaving extension syntax
+	unchanged.
 	
-	The first character in such a sequence is ignored so that markup and
-	rule-processing may be applied to the second character, which is more
-	intuitive from a data-entry perspective.
+	@type token: unicode
+	@param token: The word to be reduced.
 	
-	@type ipa_character: unicode
-	@param ipa_character: The character, representative of a phoneme, being
-	    processed.
-	@type preceding_phonemes: sequence
-	@param preceding_phonemes: A collection of all phonemes, in order, that
-	    precede the current IPA character in the current word.
-	@type following_phonemes: sequence
-	@param following_phonemes: A collection of all phonemes, in order, that
-	    follow the current IPA character in the current word.
-	
-	@rtype: tuple(2)
-	@return: (False, None) if no processing needs to be applied; (True, None) if
-	    the current character should be ignored; (True, parameters) if specific
-	    parameters should be used instead of those normally associated with the
-	    current character, where parameters are presented in the same format as
-	    found in L{IPA_PARAMETERS}.
+	@rtype: list
+	@return: A list of all IPA characters in the input token, adjusted to handle
+	    multi-character symbols, and containing all extension syntax.
 	"""
-	for ((head, tail), parameters) in _IPA_CLUSTERS:
-		if head == ipa_character and following_phonemes and following_phonemes[0] == tail:
-			return (True, None)
-		elif tail == ipa_character and preceding_phonemes and preceding_phonemes[0] == head:
-			return (True, parameters)
-	return (False, None)
+	complex_characters = _COMPLEX_CHARACTERS #Cache for speed.
+	
+	output = []
+	consumed_next = False
+	for (i, c) in enumerate(token[:-1]):
+		if consumed_next: #Skip cycle.
+			consumed_next = False
+			continue
+			
+		if c in (u'<', u'>'): #Pass through extension syntax.
+			output.append(c)
+			continue
+			
+		#Determine whether this character forms part of a complex character.
+		complex_tails = complex_characters.get(c)
+		if complex_tails is None: #No match on the head.
+			output.append(c)
+			continue
+		else: #Head matched. Check tail.
+			complex_character = complex_tails.get(token[i + 1])
+			if complex_character is None: #Tail didn't match, so just add head.
+				output.append(c)
+				continue
+			else: #Tail matched, so add both the head and the tail, then skip the next cycle.
+				consumed_next = True
+				output.append(complex_character)
+				continue
+	if not consumed_next: #Don't add consumed terminals.
+		output.append(token[-1])
+		
+	return output
 	
