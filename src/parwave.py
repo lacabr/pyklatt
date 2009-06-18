@@ -22,6 +22,7 @@ import random
 
 FREQUENCY = 10 #: A number that indicates the frequency of synthesized speech, as a multiple of 1000Hz.
 _ANTI_POP_CYCLES = 15 #: The number of cycles to clip from the front of a sound to avoid popping.
+_F0_HZ = 80 #: The core rate at which sounds will repeat, controlling pitch.
 
 class Synthesizer(object):
 	"""
@@ -44,7 +45,7 @@ class Synthesizer(object):
 		self._noise = 0.0
 		return (0,) * int(milliseconds * FREQUENCY)
 		
-	def synthesize(self, parameters, f0=160):
+	def synthesize(self, parameters, f0_multiplier):
 		"""
 		Renders the given parameters in a sinewave pattern, with period being
 		defined based on the given formant frequencies and an f0 pulse, and
@@ -54,10 +55,9 @@ class Synthesizer(object):
 		@type parameters: sequence(33)
 		@param parameters: A collection of synthesis parameters, as described in
 		    L{ipa._IPA_MAPPING} and L{ipa._IPA_CLUSTERS}.
-		@type f0: int
-		@param f0: The period pulse value, also called the primary frequency and
-		    the flutter value. This controls the period and contour of sounds in
-		    general.
+		@type f0_multiplier: number
+		@param f0_multiplier: A modifier to apply to the f0 period. Larger vowels
+		    mean slower pitch.
 		
 		@rtype: tuple
 		@return: A collection of integers between -32768 and 32767 that represent
@@ -66,7 +66,7 @@ class Synthesizer(object):
 		anti_pop_cycles = _ANTI_POP_CYCLES #Cache value locally for speed.
 		
 		#Initialize parameters required for synthesis.
-		half_f0 = f0 / 2.0
+		f0_hz = int(_F0_HZ * f0_multiplier)
 		(fgp, fgz, fgs, fnp, fnz,
 		 f1, f2, f3, f4, f5, f6,
 		 bgp, bgz, bgs, bnp, bnz,
@@ -87,17 +87,17 @@ class Synthesizer(object):
 		#Set loop variables.
 		sounds = []
 		last_result = 0
-		period_index = f0
+		period_index = f0_hz
 		for t in xrange(int(milliseconds * FREQUENCY) + anti_pop_cycles): #Run for the specified number of milliseconds, plus cycles for the anti-pop algorithm.
 			noise = self._getNoise()
 			
 			#Apply linear f0 approximation.
 			pulse = 0.0
-			if period_index >= f0:
+			if period_index == f0_hz:
 				pulse = 1.0
 				period_index = 0
 			else:
-				period_index += 2
+				period_index += 1
 				
 			#Compute cascade value.
 			source = glottal_pole_resonator.resonate(pulse)

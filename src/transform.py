@@ -99,13 +99,16 @@ def _sentenceToSound(sentence, position, remaining_sentences, options, synthesiz
 	is_exclamation = _SENTENCE_EXCLAMATION in markup
 	
 	silent_tenth_second = synthesizer.generateSilence(100) #A tenth of a second of silence.
+	previous_words = []
 	sounds = ()
 	for (i, word) in enumerate(words):
+		(new_sounds, word_characters) = _wordToSound(word, i + 1, len(words) - i - 1, previous_words, position, remaining_sentences, is_question, is_exclamation, options, synthesizer)
+		previous_words.append(word_characters)
 		#Add the word, plus a tenth of a second of silence.
-		sounds += _wordToSound(word, i + 1, len(words) - i - 1, position, remaining_sentences, is_question, is_exclamation, options, synthesizer) + silent_tenth_second
+		sounds += new_sounds + silent_tenth_second
 	return sounds
 	
-def _wordToSound(word, position, remaining_words, sentence_position, remaining_sentences, is_question, is_exclamation, options, synthesizer):
+def _wordToSound(word, position, remaining_words, previous_words, sentence_position, remaining_sentences, is_question, is_exclamation, options, synthesizer):
 	"""
 	Transforms a word into a collections of integers, representing
 	synthesized speech.
@@ -118,6 +121,9 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 	@type remaining_words: int
 	@param remaining_words: The number of words remaining before the end of the
 	    sentence is reached, not including the current word.
+	@type previous_words: sequence
+	@param previous_words: A collection of all words that have been previously
+	    synthesized.
 	@type sentence_position: int
 	@param sentence_position: The current sentence's position in its paragraph,
 	    indexed from 1.
@@ -134,8 +140,9 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 	@type synthesizer: L{parwave.Synthesizer}
 	@param synthesizer: The synthesizer to use when rendering sounds.
 	
-	@rtype: tuple
-	@return: A collection of integers that represent synthesized speech.
+	@rtype: tuple(2)
+	@return: A collection of integers that represent synthesized speech, and a
+	    unicode string of characters that make up the word.
 	"""
 	(token, markup) = word
 	
@@ -165,17 +172,18 @@ def _wordToSound(word, position, remaining_words, sentence_position, remaining_s
 			multiplier = 1.0
 	phonemes.append((subject, multiplier))
 	
+	characters = u''.join([phoneme for (phoneme, multiplier) in phonemes])
 	if options.verbose:
-		print u"\tSynthesizing '%s'..." % (u''.join([phoneme for (phoneme, multiplier) in phonemes]))
+		print u"\tSynthesizing '%s'..." % (characters)
 		
 	sounds = ()
 	for (i, phoneme) in enumerate(phonemes):
-		sounds += _phonemeToSound(phoneme, [p for (p, d) in phonemes[:i]], [p for (p, d) in phonemes[i + 1:]], position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer)
+		sounds += _phonemeToSound(phoneme, [p for (p, d) in phonemes[:i]], [p for (p, d) in phonemes[i + 1:]], position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer)
 	if terminal_pause: #Add a tenth of a second of silence.
 		sounds += synthesizer.generateSilence(100)
-	return sounds
+	return (sounds, characters)
 	
-def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer):
+def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer):
 	"""
 	Transforms a phoneme into a collections of integers, representing
 	synthesized speech.
@@ -195,6 +203,9 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	@type remaining_words: int
 	@param remaining_words: The number of words remaining before the end of the
 	    sentence is reached, not including the current word.
+	@type previous_words: sequence
+	@param previous_words: A collection of all words that have been previously
+	    synthesized.
 	@type sentence_position: int
 	@param sentence_position: The current sentence's position in its paragraph,
 	    indexed from 1.
@@ -238,14 +249,14 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	parameters_list = universal_rules.shapeContours(ipa_character, preceding_phonemes, following_phonemes, parameters_list)
 	
 	#Apply language-specific rules to the parameters.
-	parameters_list = language_rules.applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters_list)
+	(parameters_list, f0_multipliers) = language_rules.applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters_list)
 	
 	#Synthesize sound.
 	sounds = ()
-	for parameters in parameters_list:
+	for (parameters, f0_multiplier) in zip(parameters_list, f0_multipliers):
 		if options.debug:
 			print parameters
-		sounds += synthesizer.synthesize(parameters)
+		sounds += synthesizer.synthesize(parameters, f0_multiplier)
 	return sounds
 	
 def _extractSentence(tokens):
