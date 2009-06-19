@@ -20,9 +20,9 @@ import language_rules
 import parwave
 import universal_rules
 
-#'mnŋpbtdɾkgfvθðszʃʒhʔɹjwlieɛæaIəʊuoʌɔ'
-_IPA_CHARACTERS = u'mn\u014bpbtd\u027ekgfv\u03b8\xf0sz\u0283\u0292h\u0294\u0279jwlie\u025b\xe6aI\u0259\u028auo\u028c\u0254' #: A list of all characters the regular expression will have to deal with; not unlike an IPA [A-Z].
-_WORD_REGEXP = re.compile('((?:[*]|"|[*]"|"[*])?\'?)([%s][%s<>]*[:,]?)((?:[*]|"|[*]"|"[*])?(?:[.]|[?]|!|[?]!|![?])?)' % (_IPA_CHARACTERS, _IPA_CHARACTERS)) #: The regular expression that matches tokens in the input file.
+#'mnŋpbtdɾkgfvθðszʃʒhʔɹjlwʍieɛæaIəʊuoʌɔ'
+_IPA_CHARACTERS = u'mn\u014bpbtd\u027ekgfv\u03b8\xf0sz\u0283\u0292h\u0294\u0279jlw\u028die\u025b\xe6aI\u0259\u028auo\u028c\u0254' #: A list of all characters the regular expression will have to deal with; not unlike an IPA [A-Z].
+_WORD_REGEXP = re.compile('((?:[*]|"|[*]"|"[*])?\'?)([%s][%s<>]*[,]?)((?:[*]|"|[*]"|"[*])?(?:[.]|[?]|!|[?]!|![?])?)' % (_IPA_CHARACTERS, _IPA_CHARACTERS)) #: The regular expression that matches tokens in the input file.
 
 #Sentence markup enumeration.
 _SENTENCE_QUESTION = 1 #: Identifies a sentence as a question.
@@ -98,14 +98,12 @@ def _sentenceToSound(sentence, position, remaining_sentences, options, synthesiz
 	is_question = _SENTENCE_QUESTION in markup
 	is_exclamation = _SENTENCE_EXCLAMATION in markup
 	
-	silent_tenth_second = synthesizer.generateSilence(100) #A tenth of a second of silence.
 	previous_words = []
 	sounds = ()
 	for (i, word) in enumerate(words):
 		(new_sounds, word_characters) = _wordToSound(word, i + 1, len(words) - i - 1, previous_words, position, remaining_sentences, is_question, is_exclamation, options, synthesizer)
 		previous_words.append(word_characters)
-		#Add the word, plus a tenth of a second of silence.
-		sounds += new_sounds + silent_tenth_second
+		sounds += new_sounds
 	return sounds
 	
 def _wordToSound(word, position, remaining_words, previous_words, sentence_position, remaining_sentences, is_question, is_exclamation, options, synthesizer):
@@ -147,7 +145,7 @@ def _wordToSound(word, position, remaining_words, previous_words, sentence_posit
 	(token, markup) = word
 	
 	#Determine whether the word ends with timing-affecting punctuation.
-	terminal_pause = token.endswith((u',', u':'))
+	terminal_pause = token.endswith(u',')
 	if terminal_pause:
 		token = token[:-1]
 		
@@ -179,8 +177,8 @@ def _wordToSound(word, position, remaining_words, previous_words, sentence_posit
 	sounds = ()
 	for (i, phoneme) in enumerate(phonemes):
 		sounds += _phonemeToSound(phoneme, [p for (p, d) in phonemes[:i]], [p for (p, d) in phonemes[i + 1:]], position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer)
-	if terminal_pause: #Add a tenth of a second of silence.
-		sounds += synthesizer.generateSilence(100)
+	if terminal_pause: #Add a quarter of a second of silence.
+		sounds += synthesizer.generateSilence(250)
 	return (sounds, characters)
 	
 def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer):
@@ -244,6 +242,9 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	
 	#Apply vowel nasalization.
 	parameters_list = universal_rules.nasalizeVowel(ipa_character, following_phonemes, parameters_list)
+	
+	#Apply liasons.
+	parameters_list = universal_rules.bridgeWords(ipa_character, preceding_phonemes, following_phonemes, previous_words, parameters_list)
 	
 	#Apply contour-shaping.
 	parameters_list = universal_rules.shapeContours(ipa_character, preceding_phonemes, following_phonemes, parameters_list)

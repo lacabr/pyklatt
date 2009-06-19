@@ -9,7 +9,7 @@ Purpose
 Limitations
 ===========
  At present, only the following IPA symbols are supported:
-  mnŋpbtdɾkgfvθðszʃʒhʔɹjwl
+  mnŋpbtdɾkgfvθðszʃʒhʔɹjlwʍ
   ieɛæaIəʊuoʌɔ
   
 Legal
@@ -563,13 +563,13 @@ _IPA_MAPPING = {
   'freq-glottal-sine': 0,
   'freq-nasal-pole': 250,
   'freq-nasal-zero': 250,
-  'freq (1-6)':( 400, 1250, 1900, 3300, 3750, 4900),# (310, 1060, 1380, 3300, 3750, 4900),
+  'freq (1-6)': (310, 1050, 2050, 3300, 3750, 4900),
   'bwidth-glottal-pole': 100,
   'bwidth-glottal-zero': 6000,
   'bwidth-glottal-sine': 100,
   'bwidth-nasal-pole': 100,
   'bwidth-nasal-zero': 100,
-  'bwidth (1-6)': (70, 100, 120, 250, 200, 1000),
+  'bwidth (1-6)': (70, 100, 150, 250, 200, 1000),
   'formant-gain (2-6)': (0, 0, 0, 0, 0),
   'formant-bypass-gain': 0,
   'formant-cascade-gain': 50,
@@ -658,6 +658,32 @@ _IPA_MAPPING = {
   'vowel': False,
   'nasal': False,
   'voice': True,
+  'stop': False,
+  'regions': [LABIAL, DORSAL]
+ },
+ u'\u028d': { #ʍ
+  'freq-glottal-pole': 0,
+  'freq-glottal-zero': 1500,
+  'freq-glottal-sine': 0,
+  'freq-nasal-pole': 250,
+  'freq-nasal-zero': 250,
+  'freq (1-6)': (290, 610, 2150, 3300, 3750, 4900),
+  'bwidth-glottal-pole': 100,
+  'bwidth-glottal-zero': 6000,
+  'bwidth-glottal-sine': 100,
+  'bwidth-nasal-pole': 100,
+  'bwidth-nasal-zero': 100,
+  'bwidth (1-6)': (50, 80, 60, 250, 200, 1000),
+  'formant-gain (2-6)': (0, 0, 0, 0, 0),
+  'formant-bypass-gain': 0,
+  'formant-cascade-gain': 0,
+  'formant-parallel-gain': 0,
+  'voicing-linear-gain': 50,
+  'voicing-sine-gain': 0,
+  'nominal-duration': 150,
+  'vowel': False,
+  'nasal': False,
+  'voice': False,
   'stop': False,
   'regions': [LABIAL, DORSAL]
  },

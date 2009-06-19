@@ -21,7 +21,7 @@ import math
 import random
 
 FREQUENCY = 10 #: A number that indicates the frequency of synthesized speech, as a multiple of 1000Hz.
-_ANTI_POP_CYCLES = 15 #: The number of cycles to clip from the front of a sound to avoid popping.
+_ANTI_POP_CYCLES = 30 #: The number of cycles to clip from the front of a sound to avoid popping.
 _F0_HZ = 80 #: The core rate at which sounds will repeat, controlling pitch.
 
 class Synthesizer(object):
