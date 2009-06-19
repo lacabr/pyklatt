@@ -22,7 +22,7 @@ import universal_rules
 
 #'mnŋpbtdɾkgfvθðszʃʒhʔɹjlwʍieɛæaIəʊuoʌɔ'
 _IPA_CHARACTERS = u'mn\u014bpbtd\u027ekgfv\u03b8\xf0sz\u0283\u0292h\u0294\u0279jlw\u028die\u025b\xe6aI\u0259\u028auo\u028c\u0254' #: A list of all characters the regular expression will have to deal with; not unlike an IPA [A-Z].
-_WORD_REGEXP = re.compile('((?:[*]|"|[*]"|"[*])?\'?)([%s][%s<>]*[,]?)((?:[*]|"|[*]"|"[*])?(?:[.]|[?]|!|[?]!|![?])?)' % (_IPA_CHARACTERS, _IPA_CHARACTERS)) #: The regular expression that matches tokens in the input file.
+_WORD_REGEXP = re.compile('^((?:[*]|"|[*]"|"[*])?\'?)([%s][%s<>]*[,]?)((?:[*]|"|[*]"|"[*])?(?:[.]|[?]|!|[?]!|![?])?)$' % (_IPA_CHARACTERS, _IPA_CHARACTERS)) #: The regular expression that matches tokens in the input file.
 
 #Sentence markup enumeration.
 _SENTENCE_QUESTION = 1 #: Identifies a sentence as a question.
