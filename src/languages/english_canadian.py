@@ -98,7 +98,7 @@ def _inflectQuestionPitch_rise(preceding_phonemes, following_phonemes):
 	"""
 	position = len([p for p in preceding_phonemes if p in ipa.VOWELS])
 	rise_ratio = 1.0 - (0.11 / (position + len([p for p in following_phonemes if p in ipa.VOWELS]) + 1))
-	return ([], [], (rise_ratio ** position))
+	return ([], [], (0.05 + rise_ratio ** position))
 	
 def _inflectQuestionPitch_initial_rise():
 	"""
