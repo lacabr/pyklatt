@@ -49,14 +49,11 @@ def paragraphToSound(paragraph, options, synthesizer):
 	@return: A list of tuples containing integers that represent synthesized
 	    speech.
 	"""
-	if options.verbose:
-			print u"Processing '%s'..." % (paragraph)
-			
 	tokens = paragraph.split()
 	
 	sentences = []
 	while tokens:
-		(sentence, tokens) = _extractSentence(tokens)
+		(sentence, tokens) = _extractSentence(tokens, len(sentences) + 1)
 		sentences.append(sentence)
 	if options.verbose:
 		print "\tParagraph analyzed."
@@ -260,13 +257,16 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 		sounds += synthesizer.synthesize(parameters, f0_multiplier)
 	return sounds
 	
-def _extractSentence(tokens):
+def _extractSentence(tokens, sentence_number):
 	"""
 	Reads through the token stream to assemble the next sentence, applying
 	context evaluation to its elements along the way.
 	
 	@type tokens: list
 	@param tokens: A list of all tokens remaining in the input data.
+	@type sentence_number: int
+	@param sentence_number: The position of this sentence within its containing
+	    paragraph.
 	
 	@rtype: tuple(2)
 	@return: A tuple containing every token that forms a word in the extracted
@@ -288,7 +288,7 @@ def _extractSentence(tokens):
 		token = tokens.pop(0) #Get the first token remaining in the queue.
 		match = word_regexp.match(token) #Break the token into its component elements.
 		if not match:
-			raise ValueError(u"Invalid token in IPA input: %s" % (token))
+			raise ValueError(u"Invalid character in word %i, sentence %i." % (len(words) + 1, sentence_number))
 			
 		#Set word-level markup flags.
 		if '"' in match.group(1):

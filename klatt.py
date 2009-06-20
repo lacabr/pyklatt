@@ -44,18 +44,24 @@ def main(input_file, options):
   		sys.exit(1)
   	chomp_regexp = re.compile("\r?\n$") #A regular expression that cuts newlines off the ends of strings.
   	silent_half_second = synthesizer.generateSilence(500) #Half of a second of silence.
-	for paragraph in open(input_file):
-		paragraph = chomp_regexp.sub("", paragraph).strip()
-		if not paragraph: #Skip blank lines.
-			continue
-		paragraph = paragraph.decode('utf-8')
+  	try:
+		for (i, paragraph) in enumerate(open(input_file)):
+			paragraph = chomp_regexp.sub("", paragraph).strip()
+			if not paragraph: #Skip blank lines.
+				continue
+				
+			print "Processing paragraph #%i..." % (i)
+			paragraph = paragraph.decode('utf-8')
+			if options.verbose:
+				print u"'%s'" % (paragraph)
+				
+			for segment in transform.paragraphToSound(paragraph, options, synthesizer): #Convert and add the paragraph.
+				wave_form.addSamples(segment)
+			wave_form.addSamples(silent_half_second) #Add a half-second of silence.
+		wave_form.close()
+	except Exception, e:
+		print "An error occurred: %s" % (e)
 		
-		for segment in transform.paragraphToSound(paragraph, options, synthesizer): #Convert and add the paragraph.
-			wave_form.addSamples(segment)
-		wave_form.addSamples(silent_half_second) #Add a half-second of silence.
-	wave_form.close()
-	
-	
 if __name__ == '__main__':
 	parser = optparse.OptionParser(usage="%prog [options] <IPA script>", version="%s v%s" % ("Klatt CPSC 599", "June 13, 2009"),
 	 description="Renders IPA transcriptions as synthesized speech.")
