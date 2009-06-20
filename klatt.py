@@ -51,6 +51,10 @@ def main(input_file, options):
 			if not paragraph: #Skip blank lines.
 				continue
 				
+			#Compensate for Microsoft Notepad.
+			if paragraph_count == 0 and paragraph.startswith('\xef\xbb\xbf'):
+				paragraph = paragraph[3:]
+				
 			paragraph_count += 1
 			print "Processing paragraph #%i..." % (paragraph_count)
 			paragraph = paragraph.decode('utf-8')
