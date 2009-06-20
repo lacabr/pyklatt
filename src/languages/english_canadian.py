@@ -75,14 +75,14 @@ def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes,
 		if remaining_words <= 1: #Ignore questions and early positions in sentences.
 			if previous_words:
 				for word in previous_words:
-					if word[0] == u'\u028d' or word in(u'hæw', 'hu'):
+					if word[0] == u'\u028d' or word in(u'hæw', u'hu', u'hum'):
 						return _inflectQuestionPitch_fall(remaining_words)
 						
 		if remaining_words == 0:
 			return _inflectQuestionPitch_rise(preceding_phonemes, following_phonemes)
 			
 		word = u''.join(preceding_phonemes + [ipa_character] + following_phonemes)
-		if word in (u'hæw', u'hu', u'\u028d\u025b\u0279', '\u028d\u0259t', '\u028d\u025bn' u'\u028d\u028cj'):
+		if word in (u'hæw', u'hu', u'hum', u'\u028d\u025b\u0279', '\u028d\u0259t', '\u028d\u025bn' u'\u028d\u028cj'):
 			return _inflectQuestionPitch_initial_rise()
 	return ([], [], 1.0)
 	
