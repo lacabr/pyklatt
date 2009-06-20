@@ -45,12 +45,14 @@ def main(input_file, options):
   	chomp_regexp = re.compile("\r?\n$") #A regular expression that cuts newlines off the ends of strings.
   	silent_half_second = synthesizer.generateSilence(500) #Half of a second of silence.
   	try:
-		for (i, paragraph) in enumerate(open(input_file)):
+  		paragraph_count = 0
+		for paragraph in open(input_file):
 			paragraph = chomp_regexp.sub("", paragraph).strip()
 			if not paragraph: #Skip blank lines.
 				continue
 				
-			print "Processing paragraph #%i..." % (i)
+			paragraph_count += 1
+			print "Processing paragraph #%i..." % (paragraph_count)
 			paragraph = paragraph.decode('utf-8')
 			if options.verbose:
 				print u"'%s'" % (paragraph)
