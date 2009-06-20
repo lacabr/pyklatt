@@ -73,13 +73,14 @@ def applyRules(ipa_character, preceding_phonemes, following_phonemes, word_posit
 	
 	f0_multipliers = []
 	transformed_parameters = []
-	for parameters in parameters_list: #Transforms each parameter-set in the input-list, in order.
+	initial_parameter_count_zero = len(parameters_list) - 1
+	for (i, parameters) in enumerate(parameters_list): #Transforms each parameter-set in the input-list, in order.
 		parameters = parameters[:] #Make a local copy.
 		f0_multiplier = 1.0
 		preceding_parameters = []
 		following_parameters = []
 		for function in rule_functions: #Applies each language rule, in order. New parameters lists appear on either side of the central parameter set.
-			(preceding_params, following_params, multiplier) = function(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters)
+			(preceding_params, following_params, multiplier) = function(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, transformed_parameters, initial_parameter_count_zero - i, preceding_parameters, following_parameters, parameters)
 			f0_multiplier *= multiplier
 			preceding_parameters = preceding_parameters + preceding_params
 			following_parameters = following_params + following_parameters

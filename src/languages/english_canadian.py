@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-CPSC 599 module: src.language_rules
+CPSC 599 module: src.languages.english_canadian
 
 Purpose
 =======
@@ -19,7 +19,7 @@ Legal
 """
 import src.ipa as ipa
 
-def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters):
+def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Changes the pitch at the end of a question-sentence, rising in most cases,
 	and falling in the case of a 'wh' question.
@@ -61,6 +61,19 @@ def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes,
 	@type is_exclamation: bool
 	@param is_exclamation: True if the current sentence ends with an exclamation
 	    mark.
+	@type previous_phoneme_parameters: list
+	@param previous_phoneme_parameters: A collection of all parameters that
+	    appear as part of this phoneme, prior to the parameter-set currently
+	    being manipulated.
+	@type remaining_phoneme_parameter_count: int
+	@param remaining_phoneme_parameter_count: The number of parameter-sets yet
+	    to be processed as part of this phoneme.
+	@type previous_sound_parameters: list
+	@param previous_sound_parameters: A list of all preceding parameter-sets
+	    introduced prior to the current paramter-set by language rules.
+	@type following_sound_parameters: list
+	@param following_sound_parameters: A list of all preceding parameter-sets
+	    introduced after to the current paramter-set by language rules.
 	@type parameters: list(33)
 	@param parameters: A collection of parameters associated with the sound
 	    currently being procesed.
@@ -131,7 +144,7 @@ def _inflectQuestionPitch_fall(remaining_words):
 		return ([], [], 1.05) #Lower pitch slightly on the second-last word.
 	return ([], [], 1.1) #Lower pitch a bit more on the last word.
 	
-def _amplifyContent(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters):
+def _amplifyContent(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Increases the emphasis placed on a word identified as content-bearing in a
 	sentence.
@@ -173,6 +186,19 @@ def _amplifyContent(ipa_character, preceding_phonemes, following_phonemes, word_
 	@type is_exclamation: bool
 	@param is_exclamation: True if the current sentence ends with an exclamation
 	    mark.
+	@type previous_phoneme_parameters: list
+	@param previous_phoneme_parameters: A collection of all parameters that
+	    appear as part of this phoneme, prior to the parameter-set currently
+	    being manipulated.
+	@type remaining_phoneme_parameter_count: int
+	@param remaining_phoneme_parameter_count: The number of parameter-sets yet
+	    to be processed as part of this phoneme.
+	@type previous_sound_parameters: list
+	@param previous_sound_parameters: A list of all preceding parameter-sets
+	    introduced prior to the current paramter-set by language rules.
+	@type following_sound_parameters: list
+	@param following_sound_parameters: A list of all preceding parameter-sets
+	    introduced after to the current paramter-set by language rules.
 	@type parameters: list(33)
 	@param parameters: A collection of parameters associated with the sound
 	    currently being procesed.
@@ -190,7 +216,7 @@ def _amplifyContent(ipa_character, preceding_phonemes, following_phonemes, word_
 			return ([], [], 0.95) #Increase pitch, just a little.
 	return ([], [], 1.0)
 	
-def _degradePitch(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters):
+def _degradePitch(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Lowers the pitch exponentially over the course of a spoken sentence.
 	
@@ -231,6 +257,19 @@ def _degradePitch(ipa_character, preceding_phonemes, following_phonemes, word_po
 	@type is_exclamation: bool
 	@param is_exclamation: True if the current sentence ends with an exclamation
 	    mark.
+	@type previous_phoneme_parameters: list
+	@param previous_phoneme_parameters: A collection of all parameters that
+	    appear as part of this phoneme, prior to the parameter-set currently
+	    being manipulated.
+	@type remaining_phoneme_parameter_count: int
+	@param remaining_phoneme_parameter_count: The number of parameter-sets yet
+	    to be processed as part of this phoneme.
+	@type previous_sound_parameters: list
+	@param previous_sound_parameters: A list of all preceding parameter-sets
+	    introduced prior to the current paramter-set by language rules.
+	@type following_sound_parameters: list
+	@param following_sound_parameters: A list of all preceding parameter-sets
+	    introduced after to the current paramter-set by language rules.
 	@type parameters: list(33)
 	@param parameters: A collection of parameters associated with the sound
 	    currently being procesed.
@@ -246,7 +285,7 @@ def _degradePitch(ipa_character, preceding_phonemes, following_phonemes, word_po
 		return ([], [], 1.0 / (decay_ratio ** word_position))
 	return ([], [], 1.0)
 	
-def _quoteSpeech(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters):
+def _quoteSpeech(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Raises the pitch and volume of quoted speech while shortening its duration.
 	
@@ -287,6 +326,19 @@ def _quoteSpeech(ipa_character, preceding_phonemes, following_phonemes, word_pos
 	@type is_exclamation: bool
 	@param is_exclamation: True if the current sentence ends with an exclamation
 	    mark.
+	@type previous_phoneme_parameters: list
+	@param previous_phoneme_parameters: A collection of all parameters that
+	    appear as part of this phoneme, prior to the parameter-set currently
+	    being manipulated.
+	@type remaining_phoneme_parameter_count: int
+	@param remaining_phoneme_parameter_count: The number of parameter-sets yet
+	    to be processed as part of this phoneme.
+	@type previous_sound_parameters: list
+	@param previous_sound_parameters: A list of all preceding parameter-sets
+	    introduced prior to the current paramter-set by language rules.
+	@type following_sound_parameters: list
+	@param following_sound_parameters: A list of all preceding parameter-sets
+	    introduced after to the current paramter-set by language rules.
 	@type parameters: list(33)
 	@param parameters: A collection of parameters associated with the sound
 	    currently being procesed.
@@ -303,7 +355,7 @@ def _quoteSpeech(ipa_character, preceding_phonemes, following_phonemes, word_pos
 		return ([], [], 0.975) #Increase pitch.
 	return ([], [], 1.0)
 	
-def _emphasizeSpeech(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters):
+def _emphasizeSpeech(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Raises the pitch and volume of bolded speech while lengthening its duration.
 	
@@ -344,6 +396,19 @@ def _emphasizeSpeech(ipa_character, preceding_phonemes, following_phonemes, word
 	@type is_exclamation: bool
 	@param is_exclamation: True if the current sentence ends with an exclamation
 	    mark.
+	@type previous_phoneme_parameters: list
+	@param previous_phoneme_parameters: A collection of all parameters that
+	    appear as part of this phoneme, prior to the parameter-set currently
+	    being manipulated.
+	@type remaining_phoneme_parameter_count: int
+	@param remaining_phoneme_parameter_count: The number of parameter-sets yet
+	    to be processed as part of this phoneme.
+	@type previous_sound_parameters: list
+	@param previous_sound_parameters: A list of all preceding parameter-sets
+	    introduced prior to the current paramter-set by language rules.
+	@type following_sound_parameters: list
+	@param following_sound_parameters: A list of all preceding parameter-sets
+	    introduced after to the current paramter-set by language rules.
 	@type parameters: list(33)
 	@param parameters: A collection of parameters associated with the sound
 	    currently being procesed.
@@ -360,7 +425,7 @@ def _emphasizeSpeech(ipa_character, preceding_phonemes, following_phonemes, word
 		return ([], [], 0.95) #Increase pitch, sligthly.
 	return ([], [], 1.0)
 	
-def _lengthenTerminal(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters):
+def _lengthenTerminal(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Lengthens the duration of each vowel in the final word of a sentence.
 	
@@ -401,6 +466,19 @@ def _lengthenTerminal(ipa_character, preceding_phonemes, following_phonemes, wor
 	@type is_exclamation: bool
 	@param is_exclamation: True if the current sentence ends with an exclamation
 	    mark.
+	@type previous_phoneme_parameters: list
+	@param previous_phoneme_parameters: A collection of all parameters that
+	    appear as part of this phoneme, prior to the parameter-set currently
+	    being manipulated.
+	@type remaining_phoneme_parameter_count: int
+	@param remaining_phoneme_parameter_count: The number of parameter-sets yet
+	    to be processed as part of this phoneme.
+	@type previous_sound_parameters: list
+	@param previous_sound_parameters: A list of all preceding parameter-sets
+	    introduced prior to the current paramter-set by language rules.
+	@type following_sound_parameters: list
+	@param following_sound_parameters: A list of all preceding parameter-sets
+	    introduced after to the current paramter-set by language rules.
 	@type parameters: list(33)
 	@param parameters: A collection of parameters associated with the sound
 	    currently being procesed.
@@ -415,7 +493,7 @@ def _lengthenTerminal(ipa_character, preceding_phonemes, following_phonemes, wor
 		parameters[32] *= 1.5
 	return ([], [], 1.0)
 	
-def _shortenDipthong(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters):
+def _shortenDipthong(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Reduces the length of a vowel that immediately follows another vowel in a
 	word.
@@ -457,6 +535,19 @@ def _shortenDipthong(ipa_character, preceding_phonemes, following_phonemes, word
 	@type is_exclamation: bool
 	@param is_exclamation: True if the current sentence ends with an exclamation
 	    mark.
+	@type previous_phoneme_parameters: list
+	@param previous_phoneme_parameters: A collection of all parameters that
+	    appear as part of this phoneme, prior to the parameter-set currently
+	    being manipulated.
+	@type remaining_phoneme_parameter_count: int
+	@param remaining_phoneme_parameter_count: The number of parameter-sets yet
+	    to be processed as part of this phoneme.
+	@type previous_sound_parameters: list
+	@param previous_sound_parameters: A list of all preceding parameter-sets
+	    introduced prior to the current paramter-set by language rules.
+	@type following_sound_parameters: list
+	@param following_sound_parameters: A list of all preceding parameter-sets
+	    introduced after to the current paramter-set by language rules.
 	@type parameters: list(33)
 	@param parameters: A collection of parameters associated with the sound
 	    currently being procesed.
@@ -471,7 +562,7 @@ def _shortenDipthong(ipa_character, preceding_phonemes, following_phonemes, word
 		parameters[32] *= 0.5
 	return ([], [], 1.0)
 	
-def _liquidateVowels(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters):
+def _liquidateVowels(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Extends the sound of a liquid when it is immediately followed by a vowel.
 	
@@ -512,6 +603,19 @@ def _liquidateVowels(ipa_character, preceding_phonemes, following_phonemes, word
 	@type is_exclamation: bool
 	@param is_exclamation: True if the current sentence ends with an exclamation
 	    mark.
+	@type previous_phoneme_parameters: list
+	@param previous_phoneme_parameters: A collection of all parameters that
+	    appear as part of this phoneme, prior to the parameter-set currently
+	    being manipulated.
+	@type remaining_phoneme_parameter_count: int
+	@param remaining_phoneme_parameter_count: The number of parameter-sets yet
+	    to be processed as part of this phoneme.
+	@type previous_sound_parameters: list
+	@param previous_sound_parameters: A list of all preceding parameter-sets
+	    introduced prior to the current paramter-set by language rules.
+	@type following_sound_parameters: list
+	@param following_sound_parameters: A list of all preceding parameter-sets
+	    introduced after to the current paramter-set by language rules.
 	@type parameters: list(33)
 	@param parameters: A collection of parameters associated with the sound
 	    currently being procesed.
@@ -522,10 +626,10 @@ def _liquidateVowels(ipa_character, preceding_phonemes, following_phonemes, word
 	
 	@author: Sydni Bennie
 	"""
-	if following_phonemes and ipa_character in ipa.LIQUIDS and following_phonemes[0] in ipa.VOWELS:
+	if remaining_phoneme_parameter_count == 0 and following_phonemes and ipa_character in ipa.LIQUIDS and following_phonemes[0] in ipa.VOWELS:
 		vowel_values = ipa.IPA_PARAMETERS[following_phonemes[0]]
 		values = zip(parameters[:32], vowel_values[:32])
-		return ([], [[(l * 3 + v) / 4 for (l, v) in values] + [int(vowel_values[32] * 0.25)]], 1.0)
+		return ([], [[(l + v * 2) / 3 for (l, v) in values] + [int(vowel_values[32] * 0.25)]], 1.0)
 	return ([], [], 1.0)
 	
 	
