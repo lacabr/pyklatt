@@ -98,7 +98,7 @@ def _inflectQuestionPitch_rise(preceding_phonemes, following_phonemes):
 	"""
 	position = len([p for p in preceding_phonemes if p in ipa.VOWELS])
 	rise_ratio = 1.0 - (0.11 / (position + len([p for p in following_phonemes if p in ipa.VOWELS]) + 1))
-	return ([], [], (0.05 + rise_ratio ** position))
+	return ([], [], (-0.05 + rise_ratio ** position))
 	
 def _inflectQuestionPitch_initial_rise():
 	"""
@@ -242,7 +242,7 @@ def _degradePitch(ipa_character, preceding_phonemes, following_phonemes, word_po
 	@author: Sydni Bennie
 	"""
 	if not is_question:
-		decay_ratio = 1.0 - (0.1 / (word_position + remaining_words))
+		decay_ratio = 1.0 - (0.05 / (word_position + remaining_words))
 		return ([], [], 1.0 / (decay_ratio ** word_position))
 	return ([], [], 1.0)
 	
@@ -471,7 +471,66 @@ def _shortenDipthong(ipa_character, preceding_phonemes, following_phonemes, word
 		parameters[32] *= 0.5
 	return ([], [], 1.0)
 	
+def _liquidateVowels(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters):
+	"""
+	Extends the sound of a liquid when it is immediately followed by a vowel.
+	
+	This function may modify the input parameter-set.
+	
+	@type ipa_character: unicode
+	@param ipa_character: The character, representative of a phoneme, being
+	    processed.
+	@type preceding_phonemes: sequence
+	@param preceding_phonemes: A collection of all phonemes, in order, that
+	    precede the current IPA character in the current word.
+	@type following_phonemes: sequence
+	@param following_phonemes: A collection of all phonemes, in order, that
+	    follow the current IPA character in the current word.
+	@type word_position: int
+	@param word_position: The current word's position in its sentence, indexed
+	    from 1.
+	@type remaining_words: int
+	@param remaining_words: The number of words remaining before the end of the
+	    sentence is reached, not including the current word.
+	@type previous_words: sequence
+	@param previous_words: A collection of all words that have been previously
+	    synthesized.
+	@type sentence_position: int
+	@param sentence_position: The current sentence's position in its paragraph,
+	    indexed from 1.
+	@type remaining_sentences: int
+	@param remaining_sentences: The number of sentences remaining before the end
+	    of the paragraph is reached, not including the current sentence.
+	@type is_quoted: bool
+	@param is_quoted: True if the current word is part of a quoted body.
+	@type is_emphasized: bool
+	@param is_emphasized: True if the current word is part of an emphasized body.
+	@type is_content: bool
+	@param is_content: True if the current word was marked as a content word.
+	@type is_question: bool
+	@param is_question: True if the current sentence ends with a question mark.
+	@type is_exclamation: bool
+	@param is_exclamation: True if the current sentence ends with an exclamation
+	    mark.
+	@type parameters: list(33)
+	@param parameters: A collection of parameters associated with the sound
+	    currently being procesed.
+	
+	@rtype: tuple(3)
+	@return: A list of parameter-sets that precede this sound, a list of
+	    parameter-sets that follow this sound, and an f0 multiplier.
+	
+	@author: Sydni Bennie
+	"""
+	if following_phonemes and ipa_character in ipa.LIQUIDS and following_phonemes[0] in ipa.VOWELS:
+		vowel_values = ipa.IPA_PARAMETERS[following_phonemes[0]]
+		values = zip(parameters[:32], vowel_values[:32])
+		return ([], [[(l * 3 + v) / 4 for (l, v) in values] + [int(vowel_values[32] * 0.25)]], 1.0)
+	return ([], [], 1.0)
+	
+	
 RULE_FUNCTIONS = (
+ _liquidateVowels,
  _inflectQuestionPitch,
  _amplifyContent,
  _emphasizeSpeech,

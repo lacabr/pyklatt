@@ -61,6 +61,7 @@ _IPA_MAPPING = {
   'nasal': True,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [LABIAL]
  },
  u'n': {
@@ -87,6 +88,7 @@ _IPA_MAPPING = {
   'nasal': True,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [CORONAL]
  },
  u'\u014b': { #ŋ
@@ -113,6 +115,7 @@ _IPA_MAPPING = {
   'nasal': True,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [DORSAL]
  },
  u'p': {
@@ -139,6 +142,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': False,
   'stop': True,
+  'liquid': False,
   'regions': [LABIAL]
  },
  u'b': {
@@ -165,6 +169,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': True,
+  'liquid': False,
   'regions': [LABIAL]
  },
  u't': {
@@ -191,6 +196,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': False,
   'stop': True,
+  'liquid': False,
   'regions': [CORONAL]
  },
  u'd': {
@@ -217,6 +223,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': True,
+  'liquid': False,
   'regions': [CORONAL]
  },
  u'\u027e': { #ɾ
@@ -243,6 +250,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': True,
+  'liquid': False,
   'regions': [CORONAL]
  },
  u'k': {
@@ -269,6 +277,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': False,
   'stop': True,
+  'liquid': False,
   'regions': [DORSAL]
  },
  u'g': {
@@ -295,6 +304,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': True,
+  'liquid': False,
   'regions': [DORSAL]
  },
  u'f': {
@@ -321,6 +331,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': False,
   'stop': False,
+  'liquid': False,
   'regions': [LABIAL]
  },
  u'v': {
@@ -347,6 +358,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [LABIAL]
  },
  u'\u03b8': { #θ
@@ -373,6 +385,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': False,
   'stop': False,
+  'liquid': False,
   'regions': [CORONAL]
  },
  u'\xf0': { #ð
@@ -399,6 +412,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [CORONAL]
  },
  u's': {
@@ -425,6 +439,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': False,
   'stop': False,
+  'liquid': False,
   'regions': [CORONAL]
  },
  u'z': {
@@ -451,6 +466,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [CORONAL]
  },
  u'\u0283': { #ʃ
@@ -477,6 +493,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': False,
   'stop': False,
+  'liquid': False,
   'regions': [CORONAL]
  },
  u'\u0292': { #ʒ
@@ -503,6 +520,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [CORONAL]
  },
  u'h': {
@@ -529,6 +547,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': False,
   'stop': False,
+  'liquid': False,
   'regions': [GLOTTAL]
  },
  u'\u0294': { #ʔ
@@ -555,6 +574,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': False,
   'stop': True,
+  'liquid': False,
   'regions': [GLOTTAL]
  },
  u'\u0279': { #ɹ
@@ -581,6 +601,34 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': True,
+  'regions': [CORONAL]
+ },
+ u'l': {
+  'freq-glottal-pole': 0,
+  'freq-glottal-zero': 1500,
+  'freq-glottal-sine': 0,
+  'freq-nasal-pole': 250,
+  'freq-nasal-zero': 250,
+  'freq (1-6)': (310, 1050, 2880, 3300, 3750, 4900),
+  'bwidth-glottal-pole': 100,
+  'bwidth-glottal-zero': 6000,
+  'bwidth-glottal-sine': 100,
+  'bwidth-nasal-pole': 100,
+  'bwidth-nasal-zero': 100,
+  'bwidth (1-6)': (50, 100, 280, 250, 200, 1000),
+  'formant-gain (2-6)': (0, 0, 0, 0, 0),
+  'formant-bypass-gain': 0,
+  'formant-cascade-gain': 0,
+  'formant-parallel-gain': 0,
+  'voicing-linear-gain': 50,
+  'voicing-sine-gain': 0,
+  'nominal-duration': 150,
+  'vowel': False,
+  'nasal': False,
+  'voice': True,
+  'stop': False,
+  'liquid': True,
   'regions': [CORONAL]
  },
  u'j': {
@@ -607,33 +655,8 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [DORSAL]
- },
- u'l': {
-  'freq-glottal-pole': 0,
-  'freq-glottal-zero': 1500,
-  'freq-glottal-sine': 0,
-  'freq-nasal-pole': 250,
-  'freq-nasal-zero': 250,
-  'freq (1-6)': (310, 1050, 2880, 3300, 3750, 4900),
-  'bwidth-glottal-pole': 100,
-  'bwidth-glottal-zero': 6000,
-  'bwidth-glottal-sine': 100,
-  'bwidth-nasal-pole': 100,
-  'bwidth-nasal-zero': 100,
-  'bwidth (1-6)': (50, 100, 280, 250, 200, 1000),
-  'formant-gain (2-6)': (0, 0, 0, 0, 0),
-  'formant-bypass-gain': 0,
-  'formant-cascade-gain': 0,
-  'formant-parallel-gain': 0,
-  'voicing-linear-gain': 50,
-  'voicing-sine-gain': 0,
-  'nominal-duration': 150,
-  'vowel': False,
-  'nasal': False,
-  'voice': True,
-  'stop': False,
-  'regions': [CORONAL]
  },
  u'w': {
   'freq-glottal-pole': 0,
@@ -659,6 +682,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [LABIAL, DORSAL]
  },
  u'\u028d': { #ʍ
@@ -685,6 +709,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': False,
   'stop': False,
+  'liquid': False,
   'regions': [LABIAL, DORSAL]
  },
 ###############################################################################
@@ -712,6 +737,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [FRONT]
  },
  u'e': {
@@ -738,6 +764,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [FRONT]
  },
  u'\u025b': { #ɛ
@@ -764,6 +791,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [NEAR_FRONT]
  },
  u'\xe6': { #æ
@@ -790,6 +818,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [NEAR_FRONT]
  },
  u'a': {
@@ -816,6 +845,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [CENTRAL]
  },
  u'I': {
@@ -842,6 +872,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [NEAR_FRONT]
  },
  u'\u0259': { #ə
@@ -868,6 +899,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [CENTRAL]
  },
  u'\u028a': { #ʊ
@@ -894,6 +926,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [NEAR_BACK]
  },
  u'u': {
@@ -920,6 +953,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [BACK]
  },
  u'o': {
@@ -946,6 +980,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [BACK]
  },
  u'\u028c': { #ʌ
@@ -972,6 +1007,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [BACK]
  },
  u'\u0254': { #ɔ
@@ -998,6 +1034,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [BACK]
  },
 ###############################################################################
@@ -1025,6 +1062,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [CORONAL]
  },
  u't\u00283': { #tʃ
@@ -1051,6 +1089,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': False,
   'stop': False,
+  'liquid': False,
   'regions': [CORONAL]
  },
  u'aj': {
@@ -1077,6 +1116,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [NEAR_FRONT, DORSAL]
  },
  u'aw': {
@@ -1103,6 +1143,7 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [NEAR_FRONT, LABIAL, DORSAL]
  },
  u'\u0254j': { #ɔj
@@ -1129,11 +1170,13 @@ _IPA_MAPPING = {
   'nasal': False,
   'voice': True,
   'stop': False,
+  'liquid': False,
   'regions': [BACK, DORSAL]
  },
 } #: A neatly organized dictionary to make it easier for linguists to alter parameters.
 
 #Reduce IPA data to efficient structures.
+LIQUIDS = tuple([ipa_character for (ipa_character, details) in _IPA_MAPPING.iteritems() if details['liquid']]) #: A list of all liquid phonemes.
 NASALS = tuple([ipa_character for (ipa_character, details) in _IPA_MAPPING.iteritems() if details['nasal']]) #: A list of all nasal phonemes.
 STOPS = tuple([ipa_character for (ipa_character, details) in _IPA_MAPPING.iteritems() if details['stop']]) #: A list of all stop phonemes.
 VOICED = tuple([ipa_character for (ipa_character, details) in _IPA_MAPPING.iteritems() if details['voice']]) #: A list of all voiced phonemes.
