@@ -28,8 +28,40 @@ class Synthesizer(object):
 	Enables synthesis of sounds based on parameter values, as described in the
 	referenced papers.
 	"""
+	_cascade_resonators = None #: A collection of resonators to handle formants 1-6 in a cascading fashion.
+	_glottal_antiresonator = None #: An anti-resonator for glottal frequencies.
+	_glottal_pole_resonator = None #: A resonator for glottal pole frequencies.
+	_glottal_sine_resonator = None #: A resonator for glottal sine frequencies.
+	_nasal_antiresonator = None #: An anti-resonator for nasal frequencies.
+	_nasal_pole_resonator = None #: A resonator for nasal pole frequencies.
 	_noise = 0.0 #: The last-generated random noise value, needed for echoing.
+	_parallel_resonators = None #: A collection of resonators to handle formants 2-6 in parallel.
 	
+	def __init__(self):
+		"""
+		Prepares all resonator objects needed by this synthesizer.
+		"""
+		self._cascade_resonators = (
+		 _Resonator(),
+		 _Resonator(),
+		 _Resonator(),
+		 _Resonator(),
+		 _Resonator(),
+		 _Resonator()
+		)
+		self._parallel_resonators = (
+		 _Resonator(),
+		 _Resonator(),
+		 _Resonator(),
+		 _Resonator(),
+		 _Resonator(),
+		)
+		self._glottal_antiresonator = _AntiResonator()
+		self._glottal_pole_resonator = _Resonator()
+		self._glottal_sine_resonator = _Resonator()
+		self._nasal_antiresonator = _AntiResonator()
+		self._nasal_pole_resonator = _Resonator()
+		
 	def generateSilence(self, milliseconds):
 		"""
 		Generates a period of silence and resets the noise value.
@@ -73,13 +105,14 @@ class Synthesizer(object):
 		 milliseconds) = parameters
 		
 		#Prepare all resonators.
-		(cascade_resonators, parallel_resonators,
-		 glottal_pole_resonator, glottal_sine_resonator,
-		 nasal_pole_resonator, glottal_antiresonator,
-		 nasal_antiresonator) = self._initSynthesizers(
-		  (fgp, fgz, fgs, fnp, fnz, f1, f2, f3, f4, f5, f6),
-		  (bgp, bgz, bgs, bnp, bnz, bw1, bw2, bw3, bw4, bw5, bw6)
-		 )
+		self._initResonators(
+		 (fgp, fgz, fgs, fnp, fnz, f1, f2, f3, f4, f5, f6),
+		 (bgp, bgz, bgs, bnp, bnz, bw1, bw2, bw3, bw4, bw5, bw6)
+		)
+		
+		#Multiplex resonator collections.
+		resonator_collection = tuple([(c_r, p_r, a) for (c_r, p_r, a) in reversed(zip(self._cascade_resonators[1:], self._parallel_resonators, (a2, a3, a4, a5, a6)))])
+		cascade_resonator_1 = self._cascade_resonators[0]
 		
 		#Set loop variables.
 		sounds = []
@@ -97,19 +130,19 @@ class Synthesizer(object):
 				period_index += 1
 				
 			#Compute cascade value.
-			source = glottal_pole_resonator.resonate(pulse)
-			source = (glottal_antiresonator.resonate(source) * av) + (glottal_sine_resonator.resonate(source) * avs)
+			source = self._glottal_pole_resonator.resonate(pulse)
+			source = (self._glottal_antiresonator.resonate(source) * av) + (self._glottal_sine_resonator.resonate(source) * avs)
 			source += noise * ah
-			source = nasal_pole_resonator.resonate(source)
-			source = nasal_antiresonator.resonate(source)
+			source = self._nasal_pole_resonator.resonate(source)
+			source = self._nasal_antiresonator.resonate(source)
 			
 			frication = noise * af
 			
 			result = frication * ab #Seed parallel value.
-			for ((cascade_resonator, parallel_resonator), amplitude) in reversed(zip(zip(cascade_resonators[1:], parallel_resonators), (a2, a3, a4, a5, a6))):
+			for (cascade_resonator, parallel_resonator, amplitude) in resonator_collection:
 				source = cascade_resonator.resonate(source) #Update cascade value.
 				result += parallel_resonator.resonate(frication * amplitude) #Update parallel value.
-			result += cascade_resonators[0].resonate(source) #: Add final cascade value to final parallel value.
+			result += cascade_resonator_1.resonate(source) #: Add final cascade value to final parallel value.
 			
 			output = result - last_result #Subtract last result from new result to introduce a micro-period into the waveform so it's audible to humans.
 			last_result = result
@@ -122,10 +155,10 @@ class Synthesizer(object):
 				sounds.append(output)
 		return tuple(sounds)
 		
-	def _initSynthesizers(self, frequencies, bandwidths):
+	def _initResonators(self, frequencies, bandwidths):
 		"""
-		Constructs a number of _Synthesizers for use in rendering sound from
-		parameter values.
+		Initializes all resonators needed for rendering sound from parameter
+		values.
 		
 		@type frequencies: sequence(11)
 		@param frequencies: (fgp, fgz, fgs, fnp, fnz, f1, f2, f3, f4, f5, f6)
@@ -133,11 +166,6 @@ class Synthesizer(object):
 		@type bandwidths: sequence(11)
 		@param bandwidths: (bgp, bgz, bgs, bnp, bnz, bw1, bw2, bw3, bw4, bw5, bw6)
 		    from the input parameters.
-		
-		@rtype: tuple(7)
-		@return: A tuple of six cascade resonators, 1-6, a tuple of five parallel
-		    resonators, 2-6, a glottal pole resonator, a glottal sine resonator,
-		    a nasal pole resonator, and both a glottal and nasal antiresonator.
 		"""
 		#I don't know the significance of this math, unfortunately.
 		pi_neg_div = math.pi * -0.0001
@@ -146,30 +174,17 @@ class Synthesizer(object):
 		
 		b = (bgp, bgz, bgs, bnp, bnz, b1, b2, b3, b4, b5, b6) = [n * m for (n, m) in zip([math.cos(pi_2_div * f) for f in frequencies], [2 * math.e ** (pi_neg_div * bw) for bw in bandwidths])]
 		c = (cgp, cgz, cgs, cnp, cnz, c1, c2, c3, c4, c5, c6) = [-math.e ** (pi_neg_2_div * bw) for bw in bandwidths]
-		(agp, agz, ags, anp, anz, a1, a2, a3, a4, a5, a6) = [1 - b_v - c_v for (b_v, c_v) in zip(b, c)]
+		a = (agp, agz, ags, anp, anz, a1, a2, a3, a4, a5, a6) = [1 - b_v - c_v for (b_v, c_v) in zip(b, c)]
 		
-		return (
-		 (
-		  _Resonator(a1, b1, c1),
-		  _Resonator(a2, b2, c2),
-		  _Resonator(a3, b3, c3),
-		  _Resonator(a4, b4, c4),
-		  _Resonator(a5, b5, c5),
-		  _Resonator(a6, b6, c6)
-		 ),
-		 (
-		  _Resonator(a2, b2, c2),
-		  _Resonator(a3, b3, c3),
-		  _Resonator(a4, b4, c4),
-		  _Resonator(a5, b5, c5),
-		  _Resonator(a6, b6, c6)
-		 ),
-		 _Resonator(agp, bgp, cgp),
-		 _Resonator(ags, bgs, cgs),
-		 _Resonator(anp, bnp, cnp),
-		 _AntiResonator(agz, bgz, cgz),
-		 _AntiResonator(anz, bnz, cnz)
-		)
+		self._cascade_resonators[0].init(a1, b1, c1)
+		for (a_n, b_n, c_n, c_r, p_r) in zip(a[6:], b[6:], c[6:], self._cascade_resonators[1:], self._parallel_resonators):
+			p_r.init(a_n, b_n, c_n)
+			c_r.init(a_n, b_n, c_n)
+		self._glottal_pole_resonator.init(agp, bgp, cgp)
+		self._glottal_sine_resonator.init(ags, bgs, cgs)
+		self._nasal_pole_resonator.init(anp, bnp, cnp)
+		self._glottal_antiresonator.init(agz, bgz, cgz)
+		self._nasal_antiresonator.init(anz, bnz, cnz)
 		
 	def _getNoise(self):
 		"""
@@ -183,16 +198,30 @@ class Synthesizer(object):
 		
 		
 class _Resonator(object):
+	"""
+	A simulator of a two-tier echoing chamber.
+	"""
 	_a = None #: I don't know enough about Klatt's math to describe this.
 	_b = None #: I don't know enough about Klatt's math to describe this.
 	_c = None #: I don't know enough about Klatt's math to describe this.
-	_delay_1 = 0.0 #: The last-stored value for use in successive resonance.
-	_delay_2 = 0.0 #: The second-last-stored value for use in successive resonance.
+	_delay_1 = None #: The last-stored value for use in successive resonance.
+	_delay_2 = None #: The second-last-stored value for use in successive resonance.
 	
-	def __init__(self, a, b, c):
+	def init(self, a, b, c):
+		"""
+		Sets the resonance paramters and resets the echo queue.
+		
+		@type a: number
+		@param a: The value to be multiplied by the input.
+		@type b: number
+		@param b: The value to be multiplied by the last-generated output.
+		@type c: number
+		@param c: The value to be multiplied by the second-last-generated output.
+		"""
 		self._a = a
 		self._b = b
 		self._c = c
+		self._delay_1 = self._delay_2 = 0.0
 		
 	def resonate(self, input):
 		"""
@@ -229,9 +258,20 @@ class _AntiResonator(_Resonator):
 	"""
 	A variant on the resonator that generates inverse harmonics.
 	"""
-	def __init__(self, a, b, c):
+	def init(self, a, b, c):
+		"""
+		Sets the resonance paramters and resets the echo queue.
+		
+		@type a: number
+		@param a: The reciprocal of the value to be multiplied by the input.
+		@type b: number
+		@param b: The value to be multiplied by -1.0/a and the last-stored input.
+		@type c: number
+		@param c: The value to be multiplied by -1.0/a and the second-last-stored
+		    input.
+		"""
 		a = 1.0 / a
-		_Resonator.__init__(self, a, -b * a, -c * a)
+		_Resonator.init(self, a, -b * a, -c * a)
 		
 	def resonate(self, input):
 		"""
