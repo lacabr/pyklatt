@@ -30,11 +30,11 @@ RADICAL = 4 #: Identifies a consonant as radical.
 GLOTTAL = 5 #: Identifies a consonant as glottal.
 
 #Enumerations of vowel positions.
-FRONT = 1 #: Identifies a vowel as front-wards.
+FRONT = 1 #: Identifies a vowel as front.
 NEAR_FRONT = 2 #: Identifies a vowel as near-front.
 CENTRAL = 3 #: Identifies a vowel as central.
 NEAR_BACK = 4 #: Identifies a vowel as near-back.
-BACK = 5 #: Identifies a vowel as back-wards.
+BACK = 5 #: Identifies a vowel as back.
 
 _IPA_MAPPING = {
  u'm': {
@@ -56,7 +56,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 40,
   'voicing-sine-gain': 50,
-  'nominal-duration': 150,
+  'nominal-duration': 175,
   'vowel': False,
   'nasal': True,
   'voice': True,
@@ -83,7 +83,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 40,
   'voicing-sine-gain': 50,
-  'nominal-duration': 150,
+  'nominal-duration': 175,
   'vowel': False,
   'nasal': True,
   'voice': True,
@@ -110,7 +110,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 40,
   'voicing-sine-gain': 50,
-  'nominal-duration': 150,
+  'nominal-duration': 175,
   'vowel': False,
   'nasal': True,
   'voice': True,
@@ -596,7 +596,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 50,
   'voicing-sine-gain': 0,
-  'nominal-duration': 75,
+  'nominal-duration': 150,
   'vowel': False,
   'nasal': False,
   'voice': True,
@@ -677,7 +677,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 50,
   'voicing-sine-gain': 0,
-  'nominal-duration': 150,
+  'nominal-duration': 125,
   'vowel': False,
   'nasal': False,
   'voice': True,
@@ -704,7 +704,7 @@ _IPA_MAPPING = {
   'formant-parallel-gain': 0,
   'voicing-linear-gain': 50,
   'voicing-sine-gain': 0,
-  'nominal-duration': 150,
+  'nominal-duration': 125,
   'vowel': False,
   'nasal': False,
   'voice': False,
@@ -821,7 +821,7 @@ _IPA_MAPPING = {
   'liquid': False,
   'regions': [NEAR_FRONT]
  },
- u'a': {
+ u'\u0251: { #ɑ
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
