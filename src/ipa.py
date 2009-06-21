@@ -1092,7 +1092,7 @@ _IPA_MAPPING = {
   'liquid': False,
   'regions': [CORONAL]
  },
- u'aj': {
+ u'\u0251j': { #ɑj
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
@@ -1119,7 +1119,7 @@ _IPA_MAPPING = {
   'liquid': False,
   'regions': [NEAR_FRONT, DORSAL]
  },
- u'aw': {
+ u'\u0251w': { #ɑw
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
