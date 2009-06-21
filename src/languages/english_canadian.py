@@ -236,7 +236,7 @@ def _exclaim(ipa_character, preceding_phonemes, following_phonemes, word_positio
 	"""
 	Slightly decreases the duration of phonemes and increases amplitude.
 	
-	In the event of a question, pitch is also increased.
+	In the event of a question or a terminal nucleus, pitch is also increased.
 	
 	This function may modify the input parameter-set.
 	
@@ -311,8 +311,12 @@ def _exclaim(ipa_character, preceding_phonemes, following_phonemes, word_positio
 		parameters[32] *= 0.95 #Decrease duration.
 		
 		if is_question:
-			return ([], [], 0.9625) #Increase pitch.
-	return ([], [], 1.0)
+			return ([], [], 0.95) #Increase pitch.
+		elif ipa_character in ipa.VOWELS and not [c for c in following_phonemes if c in ipa.VOWELS]: #Last syllable.
+			parameters[32] *= 1.35 #Increase duration
+			return ([], [], 0.95) #Increase pitch.
+			
+	return ([], [], 0.975) #Increase pitch, sligthly.
 	
 def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
