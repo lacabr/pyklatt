@@ -232,6 +232,88 @@ def _emphasizeSpeech(ipa_character, preceding_phonemes, following_phonemes, word
 		return ([], [], 0.95) #Increase pitch, sligthly.
 	return ([], [], 1.0)
 	
+def _exclaim(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
+	"""
+	Slightly decreases the duration of phonemes and increases amplitude.
+	
+	In the event of a question, pitch is also increased.
+	
+	This function may modify the input parameter-set.
+	
+	@type ipa_character: unicode
+	@param ipa_character: The character, representative of a phoneme, being
+	    processed.
+	@type preceding_phonemes: sequence
+	@param preceding_phonemes: A collection of all phonemes, in order, that
+	    precede the current IPA character in the current word.
+	@type following_phonemes: sequence
+	@param following_phonemes: A collection of all phonemes, in order, that
+	    follow the current IPA character in the current word.
+	@type word_position: int
+	@param word_position: The current word's position in its sentence, indexed
+	    from 1.
+	@type remaining_words: int
+	@param remaining_words: The number of words remaining before the end of the
+	    sentence is reached, not including the current word.
+	@type previous_words: sequence
+	@param previous_words: A collection of all words that have been previously
+	    synthesized.
+	@type sentence_position: int
+	@param sentence_position: The current sentence's position in its paragraph,
+	    indexed from 1.
+	@type remaining_sentences: int
+	@param remaining_sentences: The number of sentences remaining before the end
+	    of the paragraph is reached, not including the current sentence.
+	@type is_quoted: bool
+	@param is_quoted: True if the current word is part of a quoted body.
+	@type is_emphasized: bool
+	@param is_emphasized: True if the current word is part of an emphasized body.
+	@type is_content: bool
+	@param is_content: True if the current word was marked as a content word.
+	@type is_question: bool
+	@param is_question: True if the current sentence ends with a question mark.
+	@type is_exclamation: bool
+	@param is_exclamation: True if the current sentence ends with an exclamation
+	    mark.
+	@type previous_phoneme_parameters: list
+	@param previous_phoneme_parameters: A collection of all parameters that
+	    appear as part of this phoneme, prior to the parameter-set currently
+	    being manipulated.
+	@type remaining_phoneme_parameter_count: int
+	@param remaining_phoneme_parameter_count: The number of parameter-sets yet
+	    to be processed as part of this phoneme.
+	@type previous_sound_parameters: list
+	@param previous_sound_parameters: A list of all preceding parameter-sets
+	    introduced prior to the current paramter-set by language rules.
+	@type following_sound_parameters: list
+	@param following_sound_parameters: A list of all preceding parameter-sets
+	    introduced after to the current paramter-set by language rules.
+	@type parameters: list(33)
+	@param parameters: A collection of parameters associated with the sound
+	    currently being procesed.
+	
+	@rtype: tuple(3)
+	@return: A list of parameter-sets that precede this sound, a list of
+	    parameter-sets that follow this sound, and an f0 multiplier.
+	
+	@author: Sydni Bennie
+	"""
+	if is_exclamation:
+		#Increase bandwidths 1-3.
+		parameters[16] *= 1.1
+		parameters[17] *= 1.1
+		parameters[18] *= 1.1
+		
+		#Raise voicing amplitudes by 5.
+		parameters[30] = min(parameters[30] + 5, 60)
+		parameters[31] = min(parameters[31] + 5, 60)
+		
+		parameters[32] *= 0.95 #Decrease duration.
+		
+		if is_question:
+			return ([], [], 0.9625) #Increase pitch.
+	return ([], [], 1.0)
+	
 def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Changes the pitch at the end of a question-sentence, rising in most cases,
@@ -645,4 +727,5 @@ RULE_FUNCTIONS = (
  _degradePitch,
  _lengthenTerminal,
  _shortenDipthong,
+ _exclaim,
 ) #: A collection of all functions to call, in order, to apply this language's rules. 
