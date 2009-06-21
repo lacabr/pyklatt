@@ -258,7 +258,7 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	for (parameters, f0_multiplier) in zip(parameters_list, f0_multipliers):
 		if options.debug:
 			print parameters
-		sounds += synthesizer.synthesize(parameters, f0_multiplier * pitch_multiplier)
+		sounds += synthesizer.synthesize(parameters, f0_multiplier * pitch_multiplier, options.turbo)
 	return sounds
 	
 def _extractSentence(tokens, sentence_number):

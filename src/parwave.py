@@ -76,7 +76,7 @@ class Synthesizer(object):
 		self._noise = 0.0
 		return (0,) * int(milliseconds * FREQUENCY)
 		
-	def synthesize(self, parameters, f0_multiplier):
+	def synthesize(self, parameters, f0_multiplier, turbo):
 		"""
 		Renders the given parameters in a sinewave pattern, with period being
 		defined based on the given formant frequencies and an f0 pulse, and
@@ -89,6 +89,9 @@ class Synthesizer(object):
 		@type f0_multiplier: number
 		@param f0_multiplier: A modifier to apply to the f0 period. Larger vowels
 		    mean slower pitch.
+		@type turbo: bool
+		@param turbo: If set, repeats a single period's synthesized values for the
+		    entire duration of the sound, sacrificing subtle quality for speed.
 		
 		@rtype: tuple
 		@return: A collection of integers between -32768 and 32767 that represent
@@ -118,7 +121,8 @@ class Synthesizer(object):
 		sounds = []
 		last_result = 0
 		period_index = f0_hz
-		for t in xrange(int(milliseconds * FREQUENCY) + f0_hz): #Run for the specified number of milliseconds, plus one full period to discard initial clicks.
+		samples_target = int(milliseconds * FREQUENCY)
+		for t in xrange(samples_target + f0_hz): #Run for the specified number of milliseconds, plus one full period to discard initial clicks.
 			noise = self._getNoise()
 			
 			#Apply linear f0 approximation.
@@ -153,6 +157,13 @@ class Synthesizer(object):
 				elif output < -16383:
 					output = -16383
 				sounds.append(output)
+				
+				#Apply turbo mode processing.
+				if turbo and t == f0_hz * 2 - 1:
+					while len(sounds) * 2 < samples_target:
+						sounds *= 2
+					sounds += sounds[:samples_target - len(sounds)]
+					break
 		return tuple(sounds)
 		
 	def _initResonators(self, frequencies, bandwidths):

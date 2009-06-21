@@ -76,6 +76,7 @@ if __name__ == '__main__':
 	parser.add_option("-d", "--debug", dest="debug", help="Output statistical information", action="store_true", default=False)
 	parser.add_option("-v", "--verbose", dest="verbose", help="Output intermediate state information", action="store_true", default=False)
 	parser.add_option("-o", "--output", dest = "output", help="Specify an alternate output wavefile (default: output.wav)", type="string", default="output.wav")
+	parser.add_option("-t", "--turbo", dest="turbo", help="Enable super-fast rendering at the expense of uniform noise", action="store_true", default=False)
 	(options, arguments) = parser.parse_args()
 	
 	if not arguments:
