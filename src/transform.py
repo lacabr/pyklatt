@@ -21,7 +21,7 @@ import parwave
 import universal_rules
 
 _IPA_CHARACTERS = u''.join([c for c in ipa.IPA_PARAMETERS.keys() if len(c) == 1]) #: A list of all characters the regular expression will have to deal with; not unlike an IPA [A-Z].
-_WORD_REGEXP = re.compile('^((?:[*]|"|[*]"|"[*])?\'?)([%s][%s<>]*[,]?)((?:[*]|"|[*]"|"[*])?(?:[.]|[?]|!|[?]!|![?])?)$' % (_IPA_CHARACTERS, _IPA_CHARACTERS)) #: The regular expression that matches tokens in the input file.
+_WORD_REGEXP = re.compile('^((?:[*]|"|[*]"|"[*])?\'?)([%s][-+<>%s]*[,]?)((?:[*]|"|[*]"|"[*])?(?:[.]|[?]|!|[?]!|![?])?)$' % (_IPA_CHARACTERS, _IPA_CHARACTERS)) #: The regular expression that matches tokens in the input file.
 del _IPA_CHARACTERS
 
 #Sentence markup enumeration.
@@ -154,26 +154,30 @@ def _wordToSound(word, position, remaining_words, previous_words, sentence_posit
 	ipa_tokens = ipa.reduceIPAClusters(token)
 	phonemes = []
 	subject = ipa_tokens[0]
-	multiplier = 1.0
+	duration_multiplier = pitch_multiplier = 1.0
 	#For each character in the token, post-IPA-reduction, collapse extension syntax into the multiplier associated with the last-seen character.
 	for i in ipa_tokens[1:]:
 		if i == u'>':
-			multiplier *= 1.5
+			duration_multiplier *= 1.5
 		elif i == u'<':
-			multiplier *= 0.5
+			duration_multiplier *= 0.5
+		elif i == u'+':
+			pitch_multiplier *= 0.95
+		elif i == u'-':
+			pitch_multiplier *= 1.05
 		else:
-			phonemes.append((subject, multiplier))
+			phonemes.append((subject, duration_multiplier, pitch_multiplier))
 			subject = i
-			multiplier = 1.0
-	phonemes.append((subject, multiplier))
+			duration_multiplier = pitch_multiplier = 1.0
+	phonemes.append((subject, duration_multiplier, pitch_multiplier))
 	
-	characters = u''.join([phoneme for (phoneme, multiplier) in phonemes])
+	characters = u''.join([phoneme for (phoneme, duration_multiplier, pitch_multiplier) in phonemes])
 	if options.verbose:
 		print u"\tSynthesizing '%s'..." % (characters)
 		
 	sounds = ()
 	for (i, phoneme) in enumerate(phonemes):
-		sounds += _phonemeToSound(phoneme, [p for (p, d) in phonemes[:i]], [p for (p, d) in phonemes[i + 1:]], position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer)
+		sounds += _phonemeToSound(phoneme, [p for (p, d, t) in phonemes[:i]], [p for (p, d, t) in phonemes[i + 1:]], position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer)
 	if terminal_pause: #Add a quarter of a second of silence.
 		sounds += synthesizer.generateSilence(250)
 	return (sounds, characters)
@@ -183,9 +187,9 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	Transforms a phoneme into a collections of integers, representing
 	synthesized speech.
 	
-	@type phoneme: tuple(2)
+	@type phoneme: tuple(3)
 	@param word: The IPA character being processed, plus the phoneme's
-	    duration multiplier.
+	    duration multiplier and pitch multiplier.
 	@type preceding_phonemes: sequence
 	@param preceding_phonemes: A collection of all phonemes, in order, that
 	    precede the current IPA character in the current word.
@@ -226,7 +230,7 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	@rtype: tuple
 	@return: A collection of integers that represent synthesized speech.
 	"""
-	(ipa_character, duration_multiplier) = phoneme
+	(ipa_character, duration_multiplier, pitch_multiplier) = phoneme
 	
 	#Retrieve synthesis parameters.
 	(parameters, regions) = ipa.IPA_DATA[ipa_character]
@@ -254,7 +258,7 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	for (parameters, f0_multiplier) in zip(parameters_list, f0_multipliers):
 		if options.debug:
 			print parameters
-		sounds += synthesizer.synthesize(parameters, f0_multiplier)
+		sounds += synthesizer.synthesize(parameters, f0_multiplier * pitch_multiplier)
 	return sounds
 	
 def _extractSentence(tokens, sentence_number):

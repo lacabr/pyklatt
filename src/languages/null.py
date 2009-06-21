@@ -21,5 +21,7 @@ Legal
 """
 import src.ipa as ipa
 
+NAME = "null"
+
 RULE_FUNCTIONS = (
 ) #: A collection of all functions to call, in order, to apply this language's rules. 

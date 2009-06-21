@@ -35,6 +35,8 @@ def main(input_file, options):
 	@type options: optparse.Values
 	@param options: The options with which synthesis should occur.
 	"""
+	print "Language: '%s'" % (transform.language_rules.language.NAME)
+	
 	synthesizer = parwave.Synthesizer() #The synthesizer that will render speech.
 	wave_form = None
 	try:

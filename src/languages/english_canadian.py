@@ -19,6 +19,8 @@ Legal
 """
 import src.ipa as ipa
 
+NAME = "Canadian English"
+
 def _amplifyContent(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Increases the emphasis placed on a word identified as content-bearing in a
