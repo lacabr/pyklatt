@@ -821,7 +821,7 @@ _IPA_MAPPING = {
   'liquid': False,
   'regions': [NEAR_FRONT]
  },
- u'\u0251: { #ɑ
+ u'\u0251': { #ɑ
   'freq-glottal-pole': 0,
   'freq-glottal-zero': 1500,
   'freq-glottal-sine': 0,
