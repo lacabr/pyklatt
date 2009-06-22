@@ -12,7 +12,8 @@ Language
  
 Usage
 =====
- All functions declared in this module have the following input signature:
+ All functions declared in this module for external iteration must have the
+ following input signature:
   - (B{unicode}) C{ipa_character}: The character, representative of a phoneme,
     being processed.
   - (B{sequence}) C{preceding_phonemes}: A collection of all phonemes, in order,
@@ -52,11 +53,14 @@ Usage
   - (B{list(33)}) C{parameters}: A collection of parameters associated with the
     sound currently being procesed.
  
- Additionally, they have the following return format:
+ Additionally, they must have the following return format:
   (B{tuple(3)}): A list of parameter-sets that precede this sound, a list of
   parameter-sets that follow this sound, and an f0 multiplier.
  
  All functions may modify the input parameter-set, C{parameters}.
+ 
+ To enable use of a function you have defined, you must add a reference to the
+ RULE_FUNCTIONS tuple, found at the end of this file. 
  
 Legal
 =====
@@ -68,6 +72,9 @@ Legal
 import src.ipa as ipa
 
 NAME = "Canadian English"
+
+_H_QUESTION_WORDS = (u'hæw', u'hu', u'hum') #: A collection of question-words that start with an 'h'.
+_QUESTION_WORDS = (u'hæw', u'hu', u'hum', u'\u028d\u025b\u0279', u'\u028d\u0259t', u'\u028d\u025bn' u'\u028d\u028cj') #: A collection of known question-words. (Unicode-values: where, what, when, why)
 
 def _amplifyContent(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
@@ -143,20 +150,18 @@ def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes,
 	"""
 	if not ipa_character == u'\u0259' and is_question and ipa_character in ipa.VOWELS: #No schwas allowed.
 		if remaining_words <= 1: #Ignore questions and early positions in sentences.
-			if previous_words:
-				for word in previous_words:
-					if word[0] == u'\u028d' or word in(u'hæw', u'hu', u'hum'): #'wh'
-						if remaining_words == 1:
-							return ([], [], 1.075) #Lower pitch slightly on the second-last word.
-						return ([], [], 1.125) #Lower pitch a bit more on the last word.
-						
+			if previous_words and [p_w for p_w in previous_words if p_w[0] == u'\u028d' or p_w in _H_QUESTION_WORDS]: #'wh'
+				if remaining_words == 1:
+					return ([], [], 1.075) #Lower pitch slightly on the second-last word.
+				return ([], [], 1.125) #Lower pitch a bit more on the last word.
+				
 		if remaining_words == 0:
 			position = len([p for p in preceding_phonemes if p in ipa.VOWELS])
 			rise_ratio = 1.0 - (0.11 / (position + len([p for p in following_phonemes if p in ipa.VOWELS]) + 1))
 			return ([], [], (-0.05 + rise_ratio ** position))
 			
 		word = u''.join(preceding_phonemes + [ipa_character] + following_phonemes)
-		if word in (u'hæw', u'hu', u'hum', u'\u028d\u025b\u0279', '\u028d\u0259t', '\u028d\u025bn' u'\u028d\u028cj'): #where, what, when, why
+		if word in _QUESTION_WORDS and not [p_w for p_w in previous_words if pw in _QUESTION_WORDS]:
 			return ([], [], 0.9) #Increase pitch.
 	return ([], [], 1.0)
 	
