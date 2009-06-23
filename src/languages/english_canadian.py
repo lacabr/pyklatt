@@ -73,7 +73,6 @@ import src.ipa as ipa
 
 NAME = "Canadian English"
 
-_H_QUESTION_WORDS = (u'hæw', u'hu', u'hum') #: A collection of question-words that start with an 'h'.
 _QUESTION_WORDS = (u'hæw', u'hu', u'hum', u'\u028d\u025b\u0279', u'\u028d\u0259t', u'\u028d\u025bn' u'\u028d\u028cj') #: A collection of known question-words. (Unicode-values: where, what, when, why)
 
 def _amplifyContent(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
@@ -150,10 +149,10 @@ def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes,
 	"""
 	if is_question and not ipa_character == u'\u0259' and ipa_character in ipa.VOWELS: #No schwas allowed.
 		if remaining_words <= 1: #Ignore questions and early positions in sentences.
-			if previous_words and [p_w for p_w in previous_words if p_w[0] == u'\u028d' or p_w in _H_QUESTION_WORDS]: #'wh'
+			if previous_words and [p_w for p_w in previous_words if p_w in _QUESTION_WORDS]:
 				if remaining_words == 1:
-					return ([], [], 1.075) #Lower pitch slightly on the second-last word.
-				return ([], [], 1.125) #Lower pitch a bit more on the last word.
+					return ([], [], 0.875) #Raise pitch on the second-last word.
+				return ([], [], 0.95) #Raise pitch very slightly on the last word.
 				
 		if remaining_words == 0:
 			position = len([p for p in preceding_phonemes if p in ipa.VOWELS])
