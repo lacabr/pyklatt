@@ -148,7 +148,7 @@ def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes,
 	
 	@author: Sydni Bennie
 	"""
-	if not ipa_character == u'\u0259' and is_question and ipa_character in ipa.VOWELS: #No schwas allowed.
+	if is_question and not ipa_character == u'\u0259' and ipa_character in ipa.VOWELS: #No schwas allowed.
 		if remaining_words <= 1: #Ignore questions and early positions in sentences.
 			if previous_words and [p_w for p_w in previous_words if p_w[0] == u'\u028d' or p_w in _H_QUESTION_WORDS]: #'wh'
 				if remaining_words == 1:
