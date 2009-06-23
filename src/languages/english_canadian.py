@@ -163,6 +163,8 @@ def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes,
 		word = u''.join(preceding_phonemes + [ipa_character] + following_phonemes)
 		if word in _QUESTION_WORDS and not [p_w for p_w in previous_words if pw in _QUESTION_WORDS]:
 			return ([], [], 0.9) #Increase pitch.
+		elif remaining_words == 1 and [p_w for p_w in previous_words if pw in _QUESTION_WORDS]:
+			return ([], [], 0.9) #Increase pitch.
 	return ([], [], 1.0)
 	
 def _lengthenTerminal(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
