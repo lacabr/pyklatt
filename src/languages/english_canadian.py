@@ -161,9 +161,9 @@ def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes,
 			return ([], [], (-0.05 + rise_ratio ** position))
 			
 		word = u''.join(preceding_phonemes + [ipa_character] + following_phonemes)
-		if word in _QUESTION_WORDS and not [p_w for p_w in previous_words if pw in _QUESTION_WORDS]:
+		if word in _QUESTION_WORDS and not [p_w for p_w in previous_words if p_w in _QUESTION_WORDS]:
 			return ([], [], 0.9) #Increase pitch.
-		elif remaining_words == 1 and [p_w for p_w in previous_words if pw in _QUESTION_WORDS]:
+		elif remaining_words == 1 and [p_w for p_w in previous_words if p_w in _QUESTION_WORDS]:
 			return ([], [], 0.9) #Increase pitch.
 	return ([], [], 1.0)
 	
