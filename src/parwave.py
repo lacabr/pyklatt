@@ -212,9 +212,9 @@ class _Resonator(object):
 	"""
 	A simulator of a two-tier echoing chamber.
 	"""
-	_a = None #: I don't know enough about Klatt's math to describe this.
-	_b = None #: I don't know enough about Klatt's math to describe this.
-	_c = None #: I don't know enough about Klatt's math to describe this.
+	_a = None #: The co-efficient for the input value in each cycle.
+	_b = None #: The co-efficient for the value stored in the last cycle.
+	_c = None #: The co-efficient for the value stored in the second-last cycle.
 	_delay_1 = None #: The last-stored value for use in successive resonance.
 	_delay_2 = None #: The second-last-stored value for use in successive resonance.
 	
