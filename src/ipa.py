@@ -1236,6 +1236,7 @@ def reduceIPAClusters(token):
 	    multi-character symbols, and containing all extension syntax.
 	"""
 	complex_characters = _COMPLEX_CHARACTERS #Cache for speed.
+	extension_characters = (u'<', u'>', u'+', u'-')
 	
 	output = []
 	consumed_next = False
@@ -1244,7 +1245,7 @@ def reduceIPAClusters(token):
 			consumed_next = False
 			continue
 			
-		if c in (u'<', u'>'): #Pass through extension syntax.
+		if c in extension_characters: #Pass through extension syntax.
 			output.append(c)
 			continue
 			
