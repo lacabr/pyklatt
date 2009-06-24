@@ -16,7 +16,7 @@ Legal
 #Change the following line to use other language rulesets.
 import languages.english_canadian as language
 
-def applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters_list):
+def applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters_list):
 	"""
 	Iterates through all parameters that make up the current phoneme, applying
 	all applicable language-specific rules, in a specific order, to each
@@ -41,6 +41,9 @@ def applyRules(ipa_character, preceding_phonemes, following_phonemes, word_posit
 	    sentence is reached, not including the current word.
 	@type previous_words: sequence
 	@param previous_words: A collection of all words that have been previously
+	    synthesized.
+	@type following_words: sequence
+	@param following_words: A collection of all words that have yet to be
 	    synthesized.
 	@type sentence_position: int
 	@param sentence_position: The current sentence's position in its paragraph,
@@ -80,7 +83,7 @@ def applyRules(ipa_character, preceding_phonemes, following_phonemes, word_posit
 		preceding_parameters = []
 		following_parameters = []
 		for function in rule_functions: #Applies each language rule, in order. New parameters lists appear on either side of the central parameter set.
-			(preceding_params, following_params, multiplier) = function(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, transformed_parameters, initial_parameter_count_zero - i, preceding_parameters, following_parameters, parameters)
+			(preceding_params, following_params, multiplier) = function(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, transformed_parameters, initial_parameter_count_zero - i, preceding_parameters, following_parameters, parameters)
 			f0_multiplier *= multiplier
 			preceding_parameters = preceding_parameters + preceding_params
 			following_parameters = following_params + following_parameters

@@ -26,6 +26,8 @@ Usage
     the sentence is reached, not including the current word.
   - (B{sequence}) C{previous_words}: A collection of all words that have been
     previously synthesized.
+  - (B{sequence}) C{following_words}: A collection of all words that have yet to
+    be synthesized.
   - (B{int}) C{sentence_position}: The current sentence's position in its
     paragraph, indexed from 1.
   - (B{int}) C{remaining_sentences}: The number of sentences remaining before
@@ -75,7 +77,7 @@ NAME = "Canadian English"
 
 _QUESTION_WORDS = (u'hæw', u'hu', u'hum', u'\u028d\u025b\u0279', u'\u028d\u0259t', u'\u028d\u025bn' u'\u028d\u028cj') #: A collection of known question-words. (Unicode-values: where, what, when, why)
 
-def _amplifyContent(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
+def _amplifyContent(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Increases the emphasis placed on a word identified as content-bearing in a
 	sentence.
@@ -89,7 +91,7 @@ def _amplifyContent(ipa_character, preceding_phonemes, following_phonemes, word_
 			return ([], [], 0.95) #Increase pitch, just a little.
 	return ([], [], 1.0)
 	
-def _degradePitch(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
+def _degradePitch(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Lowers the pitch exponentially over the course of a spoken sentence.
 	
@@ -100,7 +102,7 @@ def _degradePitch(ipa_character, preceding_phonemes, following_phonemes, word_po
 		return ([], [], 1.0 / (decay_ratio ** word_position))
 	return ([], [], 1.0)
 	
-def _emphasizeSpeech(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
+def _emphasizeSpeech(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Raises the pitch and volume of bolded speech while lengthening its duration.
 	
@@ -112,7 +114,7 @@ def _emphasizeSpeech(ipa_character, preceding_phonemes, following_phonemes, word
 		return ([], [], 0.95) #Increase pitch, sligthly.
 	return ([], [], 1.0)
 	
-def _exclaim(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
+def _exclaim(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Slightly decreases the duration of phonemes and increases amplitude.
 	
@@ -140,7 +142,7 @@ def _exclaim(ipa_character, preceding_phonemes, following_phonemes, word_positio
 			
 	return ([], [], 0.975) #Increase pitch, sligthly.
 	
-def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
+def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Changes the pitch at the end of a question-sentence, rising in most cases,
 	and falling in the case of a 'wh' question.
@@ -166,7 +168,7 @@ def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes,
 			return ([], [], 0.9) #Increase pitch.
 	return ([], [], 1.0)
 	
-def _lengthenTerminal(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
+def _lengthenTerminal(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Lengthens the duration of each vowel in the final word of a sentence.
 	
@@ -176,7 +178,7 @@ def _lengthenTerminal(ipa_character, preceding_phonemes, following_phonemes, wor
 		parameters[32] *= 1.5 #Increase duration.
 	return ([], [], 1.0)
 	
-def _liquidateVowels(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
+def _liquidateVowels(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Extends the sound of a liquid when it is immediately followed by a vowel.
 	
@@ -188,7 +190,7 @@ def _liquidateVowels(ipa_character, preceding_phonemes, following_phonemes, word
 		return ([], [[(l + v * 2) / 3 for (l, v) in values] + [int(vowel_values[32] * 0.25)]], 1.0) #Compensate for universal blending; add 50% of both sounds for 25% of the vowel's length.
 	return ([], [], 1.0)
 	
-def _quoteSpeech(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
+def _quoteSpeech(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Raises the pitch and volume of quoted speech while shortening its duration.
 	
@@ -200,7 +202,7 @@ def _quoteSpeech(ipa_character, preceding_phonemes, following_phonemes, word_pos
 		return ([], [], 0.975) #Increase pitch.
 	return ([], [], 1.0)
 	
-def _shortenDipthong(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
+def _shortenDipthong(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, previous_phoneme_parameters, remaining_phoneme_parameter_count, previous_sound_parameters, following_sound_parameters, parameters):
 	"""
 	Reduces the length of a vowel that immediately follows another vowel in a
 	word.

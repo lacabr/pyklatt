@@ -22,6 +22,7 @@ import universal_rules
 
 _IPA_CHARACTERS = u''.join([c for c in ipa.IPA_PARAMETERS.keys() if len(c) == 1]) #: A list of all characters the regular expression will have to deal with; not unlike an IPA [A-Z].
 _WORD_REGEXP = re.compile('^((?:[*]|"|[*]"|"[*])?\'?)([%s][-+<>%s]*[,]?)((?:[*]|"|[*]"|"[*])?(?:[.]|[?]|!|[?]!|![?])?)$' % (_IPA_CHARACTERS, _IPA_CHARACTERS)) #: The regular expression that matches tokens in the input file.
+_FILTER_REGEXP = re.compile('[*]|"|\'|-|[+]|<|>|,|.|[?]|!') #: A regular expression that strips non-IPA characters from a token.
 del _IPA_CHARACTERS
 
 #Sentence markup enumeration.
@@ -89,21 +90,24 @@ def _sentenceToSound(sentence, position, remaining_sentences, options, synthesiz
 	@rtype: tuple
 	@return: A collection of integers that represent synthesized speech.
 	"""
+	filter_regexp = _FILTER_REGEXP #Cache for efficiency.
+	
 	(words, markup) = sentence
 	
 	#Set markup flags.
 	is_question = _SENTENCE_QUESTION in markup
 	is_exclamation = _SENTENCE_EXCLAMATION in markup
 	
+	filtered_words = [filter_regexp.sub("", w) for (w, m) in words]
 	previous_words = []
 	sounds = ()
 	for (i, word) in enumerate(words):
-		(new_sounds, word_characters) = _wordToSound(word, i + 1, len(words) - i - 1, previous_words, position, remaining_sentences, is_question, is_exclamation, options, synthesizer)
+		(new_sounds, word_characters) = _wordToSound(word, i + 1, len(words) - i - 1, previous_words, filtered_words[i + 1:], position, remaining_sentences, is_question, is_exclamation, options, synthesizer)
 		previous_words.append(word_characters)
 		sounds += new_sounds
 	return sounds
 	
-def _wordToSound(word, position, remaining_words, previous_words, sentence_position, remaining_sentences, is_question, is_exclamation, options, synthesizer):
+def _wordToSound(word, position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_question, is_exclamation, options, synthesizer):
 	"""
 	Transforms a word into a collections of integers, representing
 	synthesized speech.
@@ -118,6 +122,9 @@ def _wordToSound(word, position, remaining_words, previous_words, sentence_posit
 	    sentence is reached, not including the current word.
 	@type previous_words: sequence
 	@param previous_words: A collection of all words that have been previously
+	    synthesized.
+	@type following_words: sequence
+	@param following_words: A collection of all words that have yet to be
 	    synthesized.
 	@type sentence_position: int
 	@param sentence_position: The current sentence's position in its paragraph,
@@ -177,12 +184,12 @@ def _wordToSound(word, position, remaining_words, previous_words, sentence_posit
 		
 	sounds = ()
 	for (i, phoneme) in enumerate(phonemes):
-		sounds += _phonemeToSound(phoneme, [p for (p, d, t) in phonemes[:i]], [p for (p, d, t) in phonemes[i + 1:]], position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer)
+		sounds += _phonemeToSound(phoneme, [p for (p, d, t) in phonemes[:i]], [p for (p, d, t) in phonemes[i + 1:]], position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer)
 	if terminal_pause: #Add a quarter of a second of silence.
 		sounds += synthesizer.generateSilence(250)
 	return (sounds, characters)
 	
-def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer):
+def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer):
 	"""
 	Transforms a phoneme into a collections of integers, representing
 	synthesized speech.
@@ -204,6 +211,9 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	    sentence is reached, not including the current word.
 	@type previous_words: sequence
 	@param previous_words: A collection of all words that have been previously
+	    synthesized.
+	@type following_words: sequence
+	@param following_words: A collection of all words that have yet to be
 	    synthesized.
 	@type sentence_position: int
 	@param sentence_position: The current sentence's position in its paragraph,
@@ -251,7 +261,7 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	parameters_list = universal_rules.shapeContours(ipa_character, preceding_phonemes, following_phonemes, parameters_list)
 	
 	#Apply language-specific rules to the parameters.
-	(parameters_list, f0_multipliers) = language_rules.applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters_list)
+	(parameters_list, f0_multipliers) = language_rules.applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters_list)
 	
 	#Synthesize sound.
 	sounds = ()
