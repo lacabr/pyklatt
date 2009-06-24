@@ -148,11 +148,13 @@ def _inflectQuestionPitch(ipa_character, preceding_phonemes, following_phonemes,
 	@author: Sydni Bennie
 	"""
 	if is_question and not ipa_character == u'\u0259' and ipa_character in ipa.VOWELS: #No schwas allowed.
-		if remaining_words <= 1: #Ignore questions and early positions in sentences.
+		if remaining_words <= 2: #Ignore questions and early positions in sentences.
 			if previous_words and [p_w for p_w in previous_words if p_w in _QUESTION_WORDS]:
-				if remaining_words == 1:
-					return ([], [], 0.875) #Raise pitch on the second-last word.
-				return ([], [], 0.95) #Raise pitch very slightly on the last word.
+				if remaining_words == 2 and following_words[0] == u'\u028c': #Also a wedge. Time backwards-goes.
+					return ([], [], 0.8)  #Raise pitch on the second-last word.
+				elif remaining_words == 1 and not following_phonemes and not preceding_phonemes and not ipa_character == u'\u028c': #Wedge.
+					return ([], [], 0.8) #Raise pitch on the second-last word.
+				return ([], [], 0.9) #Raise pitch very slightly on the last word.
 				
 		if remaining_words == 0:
 			position = len([p for p in preceding_phonemes if p in ipa.VOWELS])
