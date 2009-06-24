@@ -22,7 +22,7 @@ import universal_rules
 
 _IPA_CHARACTERS = u''.join([c for c in ipa.IPA_PARAMETERS.keys() if len(c) == 1]) #: A list of all characters the regular expression will have to deal with; not unlike an IPA [A-Z].
 _WORD_REGEXP = re.compile('^((?:[*]|"|[*]"|"[*])?\'?)([%s][-+<>%s]*[,]?)((?:[*]|"|[*]"|"[*])?(?:[.]|[?]|!|[?]!|![?])?)$' % (_IPA_CHARACTERS, _IPA_CHARACTERS)) #: The regular expression that matches tokens in the input file.
-_FILTER_REGEXP = re.compile('[*]|"|\'|-|[+]|<|>|,|.|[?]|!') #: A regular expression that strips non-IPA characters from a token.
+_FILTER_REGEXP = re.compile('[*]|"|\'|-|[+]|<|>|,|\.|[?]|!') #: A regular expression that strips non-IPA characters from a token.
 del _IPA_CHARACTERS
 
 #Sentence markup enumeration.
@@ -99,12 +99,9 @@ def _sentenceToSound(sentence, position, remaining_sentences, options, synthesiz
 	is_exclamation = _SENTENCE_EXCLAMATION in markup
 	
 	filtered_words = [filter_regexp.sub("", w) for (w, m) in words]
-	previous_words = []
 	sounds = ()
 	for (i, word) in enumerate(words):
-		(new_sounds, word_characters) = _wordToSound(word, i + 1, len(words) - i - 1, previous_words, filtered_words[i + 1:], position, remaining_sentences, is_question, is_exclamation, options, synthesizer)
-		previous_words.append(word_characters)
-		sounds += new_sounds
+		sounds += _wordToSound(word, i + 1, len(words) - i - 1, filtered_words[:i], filtered_words[i + 1:], position, remaining_sentences, is_question, is_exclamation, options, synthesizer)
 	return sounds
 	
 def _wordToSound(word, position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_question, is_exclamation, options, synthesizer):
@@ -142,9 +139,8 @@ def _wordToSound(word, position, remaining_words, previous_words, following_word
 	@type synthesizer: L{parwave.Synthesizer}
 	@param synthesizer: The synthesizer to use when rendering sounds.
 	
-	@rtype: tuple(2)
-	@return: A collection of integers that represent synthesized speech, and a
-	    unicode string of characters that make up the word.
+	@rtype: tuple
+	@return: A collection of integers that represent synthesized speech.
 	"""
 	(token, markup) = word
 	
@@ -178,16 +174,15 @@ def _wordToSound(word, position, remaining_words, previous_words, following_word
 			duration_multiplier = pitch_multiplier = 1.0
 	phonemes.append((subject, duration_multiplier, pitch_multiplier))
 	
-	characters = u''.join([phoneme for (phoneme, duration_multiplier, pitch_multiplier) in phonemes])
 	if options.verbose:
-		print u"\tSynthesizing '%s'..." % (characters)
+		print u"\tSynthesizing '%s'..." % (u''.join([phoneme for (phoneme, duration_multiplier, pitch_multiplier) in phonemes]))
 		
 	sounds = ()
 	for (i, phoneme) in enumerate(phonemes):
 		sounds += _phonemeToSound(phoneme, [p for (p, d, t) in phonemes[:i]], [p for (p, d, t) in phonemes[i + 1:]], position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer)
 	if terminal_pause: #Add a quarter of a second of silence.
 		sounds += synthesizer.generateSilence(250)
-	return (sounds, characters)
+	return sounds
 	
 def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, options, synthesizer):
 	"""

@@ -152,10 +152,11 @@ class Synthesizer(object):
 			last_result = result
 			if t >= f0_hz: #Skip the first period to avoid popping.
 				output = int(output * 32767.0) #Convert the result to an integer on an appropriate scale.
-				if output > 16383: #Constrain the output range, by clipping if necessary.
-					output = 16383
-				elif output < -16383:
-					output = -16383
+				#Constrain the output range, by clipping if necessary.
+				if output > 32767:
+					output = 32767
+				elif output < -32768:
+					output = -32768
 				sounds.append(output)
 				
 				#Apply turbo mode processing.
