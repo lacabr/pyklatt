@@ -16,6 +16,7 @@ Legal
 #Change the following line to use other language rulesets.
 import languages.english_canadian as language
 
+
 def applyRules(ipa_character, preceding_phonemes, following_phonemes, word_position, remaining_words, previous_words, following_words, sentence_position, remaining_sentences, is_quoted, is_emphasized, is_content, is_question, is_exclamation, parameters_list):
 	"""
 	Iterates through all parameters that make up the current phoneme, applying
