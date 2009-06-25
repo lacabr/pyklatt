@@ -190,7 +190,7 @@ def _phonemeToSound(phoneme, preceding_phonemes, following_phonemes, word_positi
 	synthesized speech.
 	
 	@type phoneme: tuple(3)
-	@param word: The IPA character being processed, plus the phoneme's
+	@param phoneme: The IPA character being processed, plus the phoneme's
 	    duration multiplier and pitch multiplier.
 	@type preceding_phonemes: sequence
 	@param preceding_phonemes: A collection of all phonemes, in order, that

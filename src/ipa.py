@@ -9,9 +9,11 @@ Purpose
 Limitations
 ===========
  At present, only the following IPA symbols are supported:
-  mnŋpbtdɾkgfvθðszʃʒhʔɹjlwʍ
-  ieɛæaIəʊuoʌɔ
-  
+  - Consonants:
+   - mnŋpbtdɾkgfvθðszʃʒhʔɹjlwʍ
+  - Vowels:
+   - ieɛæaIəʊuoʌɔ
+ 
 Legal
 =====
  All code, unless otherwise indicated, is original, and subject to the

@@ -14,50 +14,50 @@ Usage
 =====
  All functions declared in this module for external iteration must have the
  following input signature:
-  - (B{unicode}) C{ipa_character}: The character, representative of a phoneme,
+  - B{C{ipa_character}} (unicode) - The character, representative of a phoneme,
     being processed.
-  - (B{sequence}) C{preceding_phonemes}: A collection of all phonemes, in order,
+  - B{C{preceding_phonemes}} (sequence) - A collection of all phonemes, in order,
     that precede the current IPA character in the current word.
-  - (B{sequence}) C{following_phonemes}: A collection of all phonemes, in order,
+  - B{C{following_phonemes}} (sequence) - A collection of all phonemes, in order,
     that follow the current IPA character in the current word.
-  - (B{int}) C{word_position}: The current word's position in its sentence,
+  - B{C{word_position}} (int) - The current word's position in its sentence,
     indexed from 1.
-  - (B{int}) C{remaining_words}: The number of words remaining before the end of
+  - B{C{remaining_words}} (int) - The number of words remaining before the end of
     the sentence is reached, not including the current word.
-  - (B{sequence}) C{previous_words}: A collection of all words that have been
+  - B{C{previous_words}} (sequence) - A collection of all words that have been
     previously synthesized.
-  - (B{sequence}) C{following_words}: A collection of all words that have yet to
+  - B{C{following_words}} (sequence) - A collection of all words that have yet to
     be synthesized.
-  - (B{int}) C{sentence_position}: The current sentence's position in its
+  - B{C{sentence_position}} (int) - The current sentence's position in its
     paragraph, indexed from 1.
-  - (B{int}) C{remaining_sentences}: The number of sentences remaining before
+  - B{C{remaining_sentences}} (int) - The number of sentences remaining before
     the end of the paragraph is reached, not including the current sentence.
-  - (B{bool}) C{is_quoted}: True if the current word is part of a quoted body.
-  - (B{bool}) C{is_emphasized}: True if the current word is part of an
+  - B{C{is_quoted}} (bool) - True if the current word is part of a quoted body.
+  - B{C{is_emphasized}} (bool) - True if the current word is part of an
     emphasized body.
-  - (B{bool}) C{is_content}: True if the current word was marked as a content
+  - B{C{is_content}} (bool) - True if the current word was marked as a content
     word.
-  - (B{bool}) C{is_question}: True if the current sentence ends with a question
+  - B{C{is_question}} (bool) - True if the current sentence ends with a question
     mark.
-  - (B{bool}) C{is_exclamation}: True if the current sentence ends with an
+  - B{C{is_exclamation}} (bool) - True if the current sentence ends with an
     exclamation mark.
-  - (B{list}) C{previous_phoneme_parameters}: A collection of all parameters that
+  - B{C{previous_phoneme_parameters}} (list) - A collection of all parameters that
     appear as part of this phoneme, prior to the parameter-set currently being
     manipulated.
-  - (B{int}) C{remaining_phoneme_parameter_count}: The number of parameter-sets
+  - B{C{remaining_phoneme_parameter_count}} (int) - The number of parameter-sets
     yet to be processed as part of this phoneme.
-  - (B{list}) C{previous_sound_parameters: A list of all preceding
+  - B{C{previous_sound_parameters}} (list) - A list of all preceding
     parameter-sets introduced prior to the current paramter-set by language
     rules.
-  - (B{list}) C{following_sound_parameters}: A list of all preceding
+  - B{C{following_sound_parameters}} (list) - A list of all preceding
     parameter-sets introduced after to the current paramter-set by language
     rules.
-  - (B{list(33)}) C{parameters}: A collection of parameters associated with the
+  - B{C{parameters}} (list(33)) - A collection of parameters associated with the
     sound currently being procesed.
  
  Additionally, they must have the following return format:
-  (B{tuple(3)}): A list of parameter-sets that precede this sound, a list of
-  parameter-sets that follow this sound, and an f0 multiplier.
+  - B{tuple(3)} - A list of parameter-sets that precede this sound, a list of
+    parameter-sets that follow this sound, and an f0 multiplier.
  
  All functions may modify the input parameter-set, C{parameters}.
  

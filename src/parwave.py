@@ -85,7 +85,7 @@ class Synthesizer(object):
 		
 		@type parameters: sequence(33)
 		@param parameters: A collection of synthesis parameters, as described in
-		    L{ipa._IPA_MAPPING} and L{ipa._IPA_CLUSTERS}.
+		    L{ipa.IPA_PARAMETERS} and L{ipa.IPA_DATA}.
 		@type f0_multiplier: number
 		@param f0_multiplier: A modifier to apply to the f0 period. Larger vowels
 		    mean slower pitch.
