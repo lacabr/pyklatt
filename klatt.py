@@ -10,7 +10,7 @@ Purpose
 Legal
 =====
  All code, unless otherwise indicated, is original, and subject to the
- terms of the GPLv2, which is provided in COPYING.
+ terms of the GPLv3, which is provided in COPYING.
  
  This project borrows algorithms, ideas, and statistical data from other
  projects. Full attribution is provided in ACKNOWLEDGEMENTS.

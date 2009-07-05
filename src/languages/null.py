@@ -15,7 +15,7 @@ Language
 Legal
 =====
  All code, unless otherwise indicated, is original, and subject to the
- terms of the GPLv2, which is provided in COPYING.
+ terms of the GPLv3, which is provided in COPYING.
  
  (C) Neil Tallim, 2009
 """
